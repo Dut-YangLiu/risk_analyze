@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>风险识别 - 兜底分析</title>
+<style>
+  :root {
+    --bg: #f5f7fa; --white: #ffffff; --border: #e8ecf1; --border-light: #f0f2f5;
+    --text: #1f2329; --text-sec: #646a73; --text-muted: #8f959e;
+    --blue: #3370ff; --blue-bg: #e8f0ff; --blue-light: #94bbff;
+    --red: #f54a45; --red-bg: #fef0ef;
+    --orange: #ff7d00; --orange-bg: #fff7e8;
+    --green: #34c724; --green-bg: #e8f8e5;
+    --purple: #7b67ee;
+    --shadow: 0 1px 4px rgba(31,35,41,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', Helvetica, sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; }
+  .page { max-width:1440px; margin:0 auto; padding:16px 20px; }
+
+  /* ===== 顶部三栏 ===== */
+  .top-summary { display:grid; grid-template-columns:1fr 1.6fr 1fr; gap:12px; margin-bottom:16px; }
+  .summary-card { background:var(--white); border:1px solid var(--border); border-radius:8px; padding:16px 20px; }
+  .summary-card .card-title { font-size:14px; font-weight:600; color:var(--text); margin-bottom:12px; }
+
+  .quality-card { display:flex; flex-direction:column; align-items:center; }
+  .quality-card .card-title { align-self:flex-start; }
+  .ring-chart { position:relative; width:80px; height:80px; margin:4px 0 8px; }
+  .ring-chart svg { transform:rotate(-90deg); }
+  .ring-chart .ring-label { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+  .ring-chart .ring-label .val { font-size:18px; font-weight:700; color:var(--text); display:block; }
+  .ring-chart .ring-label .unit { font-size:11px; color:var(--text-muted); }
+  .quality-sub { font-size:12px; color:var(--text-muted); }
+
+  .risk-overview-body { display:flex; align-items:center; gap:20px; }
+  .risk-stat-group { display:flex; gap:24px; }
+  .risk-stat { text-align:center; }
+  .risk-stat .big-num { font-size:28px; font-weight:700; line-height:1.2; }
+  .risk-stat .big-num.blue { color:var(--blue); }
+  .risk-stat .big-num.green { color:var(--green); }
+  .stat-label { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .sub-info { font-size:11px; color:var(--text-muted); margin-top:4px; }
+  .sub-info span { display:block; }
+  .sub-info .done { color:var(--green); }
+  .sub-info .pending { color:var(--red); }
+
+  .pie-legend { display:flex; flex-direction:column; gap:4px; font-size:12px; margin-left:12px; }
+  .pie-legend .leg { display:flex; align-items:center; gap:6px; }
+  .pie-legend .leg .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+  .action-card .card-title { display:flex; align-items:center; gap:6px; }
+  .action-card .badge { background:var(--red); color:#fff; font-size:11px; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .action-card .tech-link { margin-left:auto; color:var(--blue); font-size:12px; cursor:pointer; font-weight:normal; }
+  .action-item { display:flex; align-items:center; gap:8px; padding:8px 0; font-size:13px; }
+  .action-item .action-dot { width:6px; height:6px; border-radius:50%; background:var(--blue); flex-shrink:0; }
+  .action-item .action-svc { background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; color:var(--text-sec); }
+  .action-item .action-btn { background:var(--blue); color:#fff; border:none; padding:4px 14px; border-radius:4px; font-size:12px; cursor:pointer; }
+
+  /* ===== 服务切换 ===== */
+  .service-switcher { display:flex; align-items:center; gap:12px; margin-bottom:12px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:10px 16px; }
+  .svc-arrow { width:28px; height:28px; border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-muted); font-size:12px; background:var(--white); flex-shrink:0; }
+  .svc-tabs { display:flex; gap:12px; flex:1; overflow-x:auto; }
+  .svc-tab { padding:6px 14px; border-radius:4px; font-size:13px; white-space:nowrap; cursor:pointer; display:flex; align-items:center; gap:6px; border:1px solid var(--border); }
+  .svc-tab.active { border-color:var(--blue); background:var(--blue-bg); }
+  .svc-tag { padding:1px 6px; border-radius:3px; font-size:11px; font-weight:500; }
+  .svc-tag.unknown { background:var(--red-bg); color:var(--red); }
+  .svc-tag.known { background:var(--green-bg); color:var(--green); }
+  .risk-pending-badge { margin-left:auto; display:flex; align-items:center; gap:6px; font-size:12px; flex-shrink:0; }
+  .risk-pending-badge .pending-dot { width:8px; height:8px; border-radius:50%; background:var(--orange); }
+  .risk-pending-badge .pending-text { color:var(--red); font-size:11px; }
+
+  /* ===== 关联需求行 ===== */
+  .meta-row { display:flex; align-items:center; gap:12px; padding:8px 16px; background:var(--white); border:1px solid var(--border); border-radius:8px; margin-bottom:12px; font-size:12px; color:var(--text-sec); flex-wrap:wrap; }
+  .meta-row .meta-label { color:var(--text-muted); }
+  .meta-row a { color:var(--blue); text-decoration:none; }
+  .meta-row .meta-val { color:var(--text); }
+
+  /* ===== 风险类别横向卡片 ===== */
+  .category-bar { display:flex; gap:12px; margin-bottom:16px; overflow-x:auto; }
+  .cat-card { flex:1; min-width:160px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:14px 16px; cursor:pointer; text-align:center; position:relative; transition:all 0.15s; }
+  .cat-card:hover { border-color:var(--blue-light); }
+  .cat-card.active { border-color:var(--blue); box-shadow:0 0 0 1px var(--blue); }
+  .cat-card.active::after { content:'✓'; position:absolute; top:8px; right:10px; color:var(--blue); font-size:14px; font-weight:700; }
+  .cat-card .cat-name { font-size:13px; font-weight:500; color:var(--text); margin-bottom:6px; }
+  .cat-card .cat-level { font-size:14px; font-weight:600; margin-bottom:4px; }
+  .cat-card .cat-level.medium { color:var(--orange); }
+  .cat-card .cat-level.none { color:var(--green); }
+  .cat-card .cat-level.unknown { color:var(--text-muted); }
+  .cat-card .cat-sub { font-size:11px; color:var(--text-muted); margin-top:4px; }
+  .cat-card .cat-bar { height:3px; background:var(--border-light); border-radius:2px; margin-top:8px; overflow:hidden; }
+  .cat-card .cat-bar-fill { height:100%; border-radius:2px; }
+
+  /* ===== 风险列表表格 ===== */
+  .risk-table-wrap { background:var(--white); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+  .risk-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .risk-table thead { background:#f8f9fb; }
+  .risk-table th { padding:10px 14px; text-align:left; font-weight:500; color:var(--text-sec); font-size:12px; border-bottom:1px solid var(--border); white-space:nowrap; }
+  .risk-table th .filter-icon { color:var(--text-muted); cursor:pointer; margin-left:4px; }
+  .risk-table td { padding:12px 14px; border-bottom:1px solid var(--border-light); vertical-align:top; }
+  .risk-table tr:last-child td { border-bottom:none; }
+  .risk-table tbody tr.data-row:hover { background:#fafbfd; }
+  .risk-table tbody tr.data-row { cursor:pointer; }
+
+  .risk-name-link { color:var(--blue); cursor:pointer; font-weight:500; font-size:13px; }
+  .risk-type-tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; }
+  .risk-type-tag.core-link { background:var(--blue-bg); color:var(--blue); }
+
+  /* 风险信息 - 摘要式 */
+  .risk-info-cell { max-width:380px; }
+  .risk-info-summary { font-size:12px; color:var(--text); line-height:1.6; }
+  .risk-info-summary strong { font-weight:600; color:var(--red); }
+  .risk-info-summary code { background:#f0f2f5; padding:1px 4px; border-radius:3px; font-size:11px; font-family:SFMono-Regular,Consolas,monospace; }
+
+  /* 链路缩略 - 直接在表格单元格中 */
+  .topo-mini { display:flex; align-items:center; gap:0; margin-top:6px; flex-wrap:nowrap; overflow-x:auto; }
+  .topo-mini .tn { padding:2px 6px; border:1px solid var(--border); border-radius:3px; font-size:10px; background:var(--white); white-space:nowrap; line-height:1.3; }
+  .topo-mini .tn.chg { border-color:var(--orange); background:var(--orange-bg); color:var(--orange); font-weight:500; }
+  .topo-mini .tn.aff { border-color:var(--red); background:var(--red-bg); color:var(--red); font-weight:500; }
+  .topo-mini .ta { color:var(--text-muted); font-size:10px; padding:0 2px; flex-shrink:0; }
+
+  .level-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 10px; border-radius:4px; font-size:12px; font-weight:500; }
+  .level-badge.medium { background:var(--orange-bg); color:var(--orange); }
+  .level-badge .level-icon { font-size:11px; }
+
+  .adopt-toggle { width:36px; height:20px; border-radius:10px; background:var(--blue); position:relative; cursor:pointer; display:inline-block; vertical-align:middle; }
+  .adopt-toggle::after { content:''; width:16px; height:16px; background:#fff; border-radius:50%; position:absolute; top:2px; right:2px; }
+  .adopt-label { font-size:12px; margin-left:4px; color:var(--text-sec); }
+
+  .cover-status { font-size:12px; }
+  .cover-status.uncovered { color:var(--red); }
+  .cover-status select { font-size:11px; border:1px solid var(--border); border-radius:3px; padding:1px 4px; background:var(--white); margin-left:2px; }
+
+  .op-link { color:var(--blue); font-size:12px; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:4px; }
+
+  /* ===== 展开详情 ===== */
+  .detail-panel { display:none; background:#fafbfd; }
+  .detail-panel.show { display:table-row; }
+  .detail-panel td { padding:0 !important; }
+  .detail-inner { padding:16px 20px; }
+
+  .attr-section { margin-bottom:16px; }
+  .attr-title { font-size:13px; font-weight:600; color:var(--text); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .attr-title::before { content:''; width:3px; height:14px; background:var(--blue); border-radius:2px; }
+
+  .cause-chain { display:flex; align-items:stretch; gap:0; }
+  .cause-step { flex:1; min-width:0; }
+  .cause-box { border:1px solid var(--border); border-radius:6px; padding:10px 12px; background:var(--white); height:100%; }
+  .cause-label { font-size:11px; color:var(--text-muted); margin-bottom:4px; display:flex; align-items:center; gap:4px; }
+  .cause-label .sn { display:inline-flex; width:16px; height:16px; border-radius:50%; background:var(--blue); color:#fff; font-size:10px; align-items:center; justify-content:center; flex-shrink:0; }
+  .cause-text { font-size:12px; line-height:1.6; }
+  .cause-text strong { font-weight:600; }
+  .cause-text code { background:#f0f2f5; padding:1px 4px; border-radius:3px; font-size:11px; font-family:SFMono-Regular,Consolas,monospace; }
+  .cause-arrow { display:flex; align-items:center; padding:0 6px; color:var(--text-muted); font-size:14px; flex-shrink:0; }
+
+  .code-section { margin-bottom:16px; }
+  .sec-title { font-size:13px; font-weight:600; color:var(--text); margin-bottom:8px; }
+  .code-block { background:#f6f8fa; border:1px solid var(--border); border-radius:6px; font-family:SFMono-Regular,Consolas,monospace; font-size:12px; line-height:1.7; overflow-x:auto; }
+  .code-line { padding:0 12px; white-space:pre; }
+  .code-line.add { background:#e6ffec; }
+  .code-line.del { background:#ffeef0; }
+  .code-line .ln { display:inline-block; width:32px; color:var(--text-muted); user-select:none; text-align:right; margin-right:10px; }
+
+  /* 大链路拓扑 */
+  .topo-section { margin-bottom:16px; }
+  .topo-flow { display:flex; align-items:center; gap:0; overflow-x:auto; padding:8px 0; }
+  .topo-node { padding:8px 16px; border:1px solid var(--border); border-radius:6px; font-size:12px; background:var(--white); white-space:nowrap; text-align:center; min-width:90px; }
+  .topo-node.changed { border-color:var(--orange); background:var(--orange-bg); color:var(--orange); font-weight:500; }
+  .topo-node.affected { border-color:var(--red); background:var(--red-bg); color:var(--red); font-weight:500; }
+  .topo-node .node-sub { font-size:10px; display:block; margin-top:2px; }
+  .topo-arw { color:var(--text-muted); font-size:14px; padding:0 6px; flex-shrink:0; }
+  .topo-meta { font-size:11px; color:var(--text-muted); margin-top:6px; }
+
+  /* 影响+行动双栏 */
+  .impact-action { display:flex; gap:16px; margin-bottom:14px; }
+  .impact-col, .action-col { flex:1; background:var(--white); border:1px solid var(--border); border-radius:6px; padding:12px 14px; }
+  .col-title { font-size:12px; font-weight:600; color:var(--text-sec); margin-bottom:8px; }
+  .impact-item { display:flex; align-items:flex-start; gap:6px; font-size:12px; padding:3px 0; line-height:1.6; }
+  .impact-dot { width:5px; height:5px; border-radius:50%; margin-top:7px; flex-shrink:0; }
+  .impact-dot.h { background:var(--red); }
+  .impact-dot.m { background:var(--orange); }
+  .act-item { display:flex; align-items:flex-start; gap:6px; padding:3px 0; font-size:12px; line-height:1.6; }
+  .act-ck { width:14px; height:14px; border:1.5px solid #c8c8c8; border-radius:3px; flex-shrink:0; margin-top:2px; }
+  .act-priority { font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; flex-shrink:0; margin-left:auto; }
+  .act-priority.p0 { background:var(--red-bg); color:var(--red); }
+  .act-priority.p1 { background:var(--orange-bg); color:var(--orange); }
+  .act-priority.p2 { background:var(--blue-bg); color:var(--blue); }
+
+  .guarantee-strip { display:flex; align-items:center; gap:20px; padding:8px 14px; background:var(--white); border:1px solid var(--border); border-radius:6px; font-size:12px; color:var(--text-muted); }
+  .guar-item { display:flex; align-items:center; gap:6px; }
+  .guar-bar { width:50px; height:4px; background:var(--border-light); border-radius:2px; overflow:hidden; }
+  .guar-fill { height:100%; border-radius:2px; }
+  .guar-fill.good { background:var(--green); }
+  .guar-fill.warn { background:var(--orange); }
+  .guar-fill.bad { background:var(--red); }
+  .guar-pct { font-size:11px; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ===== 顶部三栏 ===== -->
+  <div class="top-summary">
+    <div class="summary-card quality-card">
+      <div class="card-title">研发质量</div>
+      <div class="ring-chart">
+        <svg width="80" height="80"><circle cx="40" cy="40" r="34" fill="none" stroke="#e8ecf1" stroke-width="6"/></svg>
+        <div class="ring-label"><span class="val">0%</span><span class="unit">覆盖率</span></div>
+      </div>
+      <div class="quality-sub">增量行覆盖率</div>
+    </div>
+
+    <div class="summary-card" style="position:relative;">
+      <div class="card-title">变更风险</div>
+      <div style="position:absolute;top:16px;right:20px;font-size:12px;color:var(--red);display:flex;align-items:center;gap:4px;">⚠ 未完成风险验证</div>
+      <div class="risk-overview-body">
+        <div class="risk-stat-group">
+          <div class="risk-stat">
+            <div class="big-num blue">4</div>
+            <div class="stat-label">总数</div>
+            <div class="sub-info"><span class="done">● 已验证 0</span><span class="pending">● 待验证 4</span></div>
+            <div class="stat-label" style="margin-top:6px">检测项通过率</div>
+          </div>
+          <div style="display:flex;align-items:center;font-size:16px;color:var(--text-muted);">⇌</div>
+          <div class="risk-stat">
+            <div class="big-num green">4</div>
+            <div class="stat-label">总数</div>
+            <div class="pie-legend" style="margin-top:6px;">
+              <div class="leg"><span class="dot" style="background:var(--blue)"></span>配置风险</div>
+              <div class="leg"><span class="dot" style="background:var(--orange)"></span>客诉舆情</div>
+              <div class="leg"><span class="dot" style="background:var(--red)"></span>工程质量</div>
+              <div class="leg"><span class="dot" style="background:var(--green)"></span>功能点分析</div>
+            </div>
+            <div class="stat-label" style="margin-top:6px">风险分布</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-card action-card">
+      <div class="card-title">操作建议 <span class="badge">1</span> <span class="tech-link">🔧 技术支持</span></div>
+      <div class="action-item">
+        <span class="action-dot"></span>
+        <span>4个(中/高)风险待知悉</span>
+        <span class="action-svc">faceu.commerce.ad_api</span>
+        <button class="action-btn">处理</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 服务切换 ===== -->
+  <div class="service-switcher">
+    <div class="svc-arrow">◀</div>
+    <div class="svc-tabs">
+      <div class="svc-tab active">faceu.commerce.ad_api <span class="svc-tag unknown">未知悉</span></div>
+      <div class="svc-tab">ug.incentive.task_engine <span class="svc-tag known">已知悉</span></div>
+    </div>
+    <div class="svc-arrow">▶</div>
+    <div class="risk-pending-badge">
+      <span class="pending-dot"></span>
+      <span>风险待知悉</span>
+      <span class="pending-text">⚠ 请知悉并确认识别风险是否采纳</span>
+    </div>
+  </div>
+
+  <!-- ===== 关联需求行 ===== -->
+  <div class="meta-row">
+    <span class="meta-label">关联需求</span>
+    <a href="#">【剪映】剪同款增加看广免广弹窗</a>
+    <span class="meta-label">Commit</span>
+    <span class="meta-val">ed6ec3307e...</span>
+    <span class="meta-label">Diff</span>
+    <a href="#">点击查看</a>
+    <span class="meta-label">流水线</span>
+    <span class="meta-val">1139745723394</span>
+    <span class="meta-label">更新时间</span>
+    <span class="meta-val">2026-04-13 18:45:30</span>
+  </div>
+
+  <!-- ===== 风险类别卡片 ===== -->
+  <div class="category-bar">
+    <div class="cat-card active" onclick="switchCat(this)">
+      <div class="cat-name">工程质量</div>
+      <div class="cat-level medium">中风险</div>
+      <div class="cat-bar"><div class="cat-bar-fill" style="width:0%;background:var(--orange)"></div></div>
+      <div class="cat-sub">覆盖率: 0%</div>
+    </div>
+    <div class="cat-card" onclick="switchCat(this)">
+      <div class="cat-name">客诉舆情</div>
+      <div class="cat-level none">无风险</div>
+      <div class="cat-bar"><div class="cat-bar-fill" style="width:100%;background:var(--blue)"></div></div>
+      <div class="cat-sub">覆盖率: 100%</div>
+    </div>
+    <div class="cat-card" onclick="switchCat(this)">
+      <div class="cat-name">配置风险</div>
+      <div class="cat-level none">无风险</div>
+      <div class="cat-bar"><div class="cat-bar-fill" style="width:100%;background:var(--blue)"></div></div>
+      <div class="cat-sub">覆盖率: 100%</div>
+    </div>
+    <div class="cat-card" onclick="switchCat(this)">
+      <div class="cat-name">功能点分析</div>
+      <div class="cat-level unknown">未知 ⓘ</div>
+      <div class="cat-bar"><div class="cat-bar-fill" style="width:100%;background:var(--blue)"></div></div>
+      <div class="cat-sub">覆盖率: 100%</div>
+    </div>
+  </div>
+
+  <!-- ===== 风险列表 ===== -->
+  <div class="risk-table-wrap">
+    <table class="risk-table">
+      <thead>
+        <tr>
+          <th style="width:160px">风险项</th>
+          <th style="width:80px">风险类型 <span class="filter-icon">▼</span></th>
+          <th>风险信息</th>
+          <th style="width:80px">风险等级</th>
+          <th style="width:80px">是否采纳</th>
+          <th style="width:90px">覆盖状态</th>
+          <th style="width:60px">自动测试</th>
+          <th style="width:100px">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- ===== 风险项 1：剪映*获取相册页广告 ===== -->
+        <tr class="data-row" onclick="toggleDetail('d1')">
+          <td><span class="risk-name-link">剪映*获取相册页广告</span></td>
+          <td><span class="risk-type-tag core-link">核心链路</span></td>
+          <td class="risk-info-cell">
+            <div class="risk-info-summary">变更修改了 <code>GetGroMoreAd</code> 接口的广告请求参数结构，新增免广弹窗分支逻辑。下游广告渲染模块按<strong>旧参数格式解析将失败</strong>，导致相册页广告无法正常加载，直接影响广告收入。</div>
+            <div class="topo-mini">
+              <span class="tn">剪映客户端</span><span class="ta">→</span>
+              <span class="tn chg">GetGroMoreAd ⚠</span><span class="ta">→</span>
+              <span class="tn aff">广告渲染 ✕</span><span class="ta">→</span>
+              <span class="tn">相册页展示</span>
+            </div>
+          </td>
+          <td><span class="level-badge medium"><span class="level-icon">🔓</span> 中风险</span></td>
+          <td><span class="adopt-toggle"></span> <span class="adopt-label">采纳</span></td>
+          <td><span class="cover-status uncovered">未覆盖 <select><option>▾</option></select></span></td>
+          <td></td>
+          <td><span class="op-link">展开详情 ›</span></td>
+        </tr>
+        <tr class="detail-panel" id="d1">
+          <td colspan="8">
+            <div class="detail-inner">
+              <div class="attr-section">
+                <div class="attr-title">归因分析 — 为什么这是风险？</div>
+                <div class="cause-chain">
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">1</span>代码变更</div><div class="cause-text"><code>GetGroMoreAd</code> 接口入参新增 <code>freeAdConfig</code> 结构体，原 <code>req</code> 被封装为 <code>buildAdReq(req, freeAdConfig)</code></div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">2</span>变更意图</div><div class="cause-text">为相册页广告增加<strong>看广免广弹窗</strong>功能，符合条件的用户跳过广告展示</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">3</span>影响推导</div><div class="cause-text">下游广告渲染模块按<strong>旧参数格式解析</strong>，新增字段导致反序列化结果中 <code>adSlot</code> 字段<strong>缺失</strong>，广告SDK无法正确渲染</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">4</span>业务后果</div><div class="cause-text">相册页<strong>广告加载失败</strong>，展示空白或崩溃；日均 300万次请求受影响，<strong>广告收入直接损失</strong></div></div></div>
+                </div>
+              </div>
+              <div class="code-section">
+                <div class="sec-title">本次变更代码</div>
+                <div class="code-block">
+                  <div class="code-line del"><span class="ln">127</span>- resp, err := client.GetGroMoreAd(ctx, req)</div>
+                  <div class="code-line add"><span class="ln">127</span>+ resp, err := client.GetGroMoreAd(ctx, buildAdReq(req, freeAdConfig))</div>
+                  <div class="code-line add"><span class="ln">128</span>+ if freeAdConfig.Enabled &amp;&amp; shouldShowFreeAd(user) {</div>
+                  <div class="code-line add"><span class="ln">129</span>+     return buildFreeAdResp(resp), nil</div>
+                  <div class="code-line add"><span class="ln">130</span>+ }</div>
+                </div>
+              </div>
+              <div class="topo-section">
+                <div class="sec-title">受影响核心链路</div>
+                <div class="topo-flow">
+                  <div class="topo-node">剪映客户端</div><div class="topo-arw">→</div>
+                  <div class="topo-node">AdService Gateway</div><div class="topo-arw">→</div>
+                  <div class="topo-node changed">GetGroMoreAd<span class="node-sub">⚠ 参数结构变更</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">广告渲染模块<span class="node-sub">✕ adSlot 字段缺失</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">相册页展示<span class="node-sub">✕ 广告空白</span></div>
+                </div>
+                <div class="topo-meta">核心广告链路 · 日均 300万次请求 · 覆盖剪映相册页全量流量</div>
+              </div>
+              <div class="impact-action">
+                <div class="impact-col">
+                  <div class="col-title">受影响范围</div>
+                  <div class="impact-item"><span class="impact-dot h"></span><div><strong>广告加载链路</strong>：参数结构变更导致广告SDK解析失败，广告无法渲染</div></div>
+                  <div class="impact-item"><span class="impact-dot h"></span><div><strong>免广弹窗新分支</strong>：<code>shouldShowFreeAd</code> 逻辑未经线上验证，异常时用户始终跳过广告</div></div>
+                  <div class="impact-item"><span class="impact-dot m"></span><div><strong>广告计费链路</strong>（间接）：广告未展示但计费请求已发出，存在空曝光</div></div>
+                </div>
+                <div class="action-col">
+                  <div class="col-title">建议行动</div>
+                  <div class="act-item"><span class="act-ck"></span><span>回归「广告请求→渲染→展示」全链路，验证新旧参数兼容</span><span class="act-priority p0">P0</span></div>
+                  <div class="act-item"><span class="act-ck"></span><span>新增免广弹窗触发/未触发/异常三种场景用例</span><span class="act-priority p0">P0</span></div>
+                  <div class="act-item"><span class="act-ck"></span><span>灰度阶段验证广告填充率和展示率无下跌</span><span class="act-priority p1">P1</span></div>
+                </div>
+              </div>
+              <div class="guarantee-strip">
+                <div class="guar-item">自动化 <div class="guar-bar"><div class="guar-fill warn" style="width:35%"></div></div> <span class="guar-pct" style="color:var(--orange)">35%</span></div>
+                <div class="guar-item">监控 <div class="guar-bar"><div class="guar-fill good" style="width:80%"></div></div> <span class="guar-pct" style="color:var(--green)">80%</span></div>
+                <div class="guar-item">灰度 <div class="guar-bar"><div class="guar-fill good" style="width:70%"></div></div> <span class="guar-pct" style="color:var(--green)">70%</span></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- ===== 风险项 2：剪映*获取相册页广告recall ===== -->
+        <tr class="data-row" onclick="toggleDetail('d2')">
+          <td><span class="risk-name-link">剪映*获取相册页广告recall</span></td>
+          <td><span class="risk-type-tag core-link">核心链路</span></td>
+          <td class="risk-info-cell">
+            <div class="risk-info-summary">变更修改了 <code>HandleRecall</code> 广告召回策略逻辑，新增用户画像权重因子。召回模块<strong>权重计算溢出时返回空列表</strong>，导致广告填充率归零，相册页广告位展示空白。</div>
+            <div class="topo-mini">
+              <span class="tn">广告请求</span><span class="ta">→</span>
+              <span class="tn chg">HandleRecall ⚠</span><span class="ta">→</span>
+              <span class="tn aff">广告排序 ✕</span><span class="ta">→</span>
+              <span class="tn">广告展示</span>
+            </div>
+          </td>
+          <td><span class="level-badge medium"><span class="level-icon">🔓</span> 中风险</span></td>
+          <td><span class="adopt-toggle"></span> <span class="adopt-label">采纳</span></td>
+          <td><span class="cover-status uncovered">未覆盖 <select><option>▾</option></select></span></td>
+          <td></td>
+          <td><span class="op-link">展开详情 ›</span></td>
+        </tr>
+        <tr class="detail-panel" id="d2">
+          <td colspan="8">
+            <div class="detail-inner">
+              <div class="attr-section">
+                <div class="attr-title">归因分析 — 为什么这是风险？</div>
+                <div class="cause-chain">
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">1</span>代码变更</div><div class="cause-text"><code>HandleRecall</code> 召回函数新增 <code>userProfileWeight</code> 权重因子，修改候选集排序逻辑</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">2</span>变更意图</div><div class="cause-text">引入用户画像数据<strong>优化广告召回精准度</strong>，提升广告点击率</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">3</span>影响推导</div><div class="cause-text">用户画像服务超时或返回空值时，权重计算<strong>除零异常</strong>，候选集过滤后<strong>结果为空</strong>，下游排序模块收到空列表</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">4</span>业务后果</div><div class="cause-text">广告<strong>填充率归零</strong>，相册页广告位展示空白，<strong>广告收入损失</strong>；用户画像服务P99延迟 120ms，超时概率约 0.3%</div></div></div>
+                </div>
+              </div>
+              <div class="topo-section">
+                <div class="sec-title">受影响核心链路</div>
+                <div class="topo-flow">
+                  <div class="topo-node">广告请求</div><div class="topo-arw">→</div>
+                  <div class="topo-node">用户画像服务</div><div class="topo-arw">→</div>
+                  <div class="topo-node changed">HandleRecall<span class="node-sub">⚠ 权重逻辑变更</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">广告排序模块<span class="node-sub">✕ 空候选集</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">广告展示<span class="node-sub">✕ 填充率归零</span></div>
+                </div>
+                <div class="topo-meta">广告召回核心链路 · 日均 300万次 · 用户画像服务 P99 120ms</div>
+              </div>
+              <div class="impact-action">
+                <div class="impact-col">
+                  <div class="col-title">受影响范围</div>
+                  <div class="impact-item"><span class="impact-dot h"></span><div><strong>广告召回链路</strong>：权重异常时候选集为空，填充率归零</div></div>
+                  <div class="impact-item"><span class="impact-dot m"></span><div><strong>广告排序</strong>：空候选集导致排序模块返回 fallback 默认广告</div></div>
+                </div>
+                <div class="action-col">
+                  <div class="col-title">建议行动</div>
+                  <div class="act-item"><span class="act-ck"></span><span>验证用户画像超时/空值时的降级逻辑，确保返回非空候选集</span><span class="act-priority p0">P0</span></div>
+                  <div class="act-item"><span class="act-ck"></span><span>灰度阶段对比新旧策略的填充率和点击率</span><span class="act-priority p1">P1</span></div>
+                </div>
+              </div>
+              <div class="guarantee-strip">
+                <div class="guar-item">自动化 <div class="guar-bar"><div class="guar-fill warn" style="width:40%"></div></div> <span class="guar-pct" style="color:var(--orange)">40%</span></div>
+                <div class="guar-item">监控 <div class="guar-bar"><div class="guar-fill good" style="width:75%"></div></div> <span class="guar-pct" style="color:var(--green)">75%</span></div>
+                <div class="guar-item">灰度 <div class="guar-bar"><div class="guar-fill good" style="width:68%"></div></div> <span class="guar-pct" style="color:var(--green)">68%</span></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- ===== 风险项 3：醒图*获取广告配置 ===== -->
+        <tr class="data-row" onclick="toggleDetail('d3')">
+          <td><span class="risk-name-link">醒图*获取广告配置</span></td>
+          <td><span class="risk-type-tag core-link">核心链路</span></td>
+          <td class="risk-info-cell">
+            <div class="risk-info-summary">变更修改了 <code>RetouchpicsHandleGetAdConfig</code> 广告配置下发逻辑，新增免广弹窗配置字段。醒图端SDK按<strong>旧schema解析配置失败</strong>，广告配置拉取返回空，醒图端广告全量不展示。</div>
+            <div class="topo-mini">
+              <span class="tn">醒图客户端</span><span class="ta">→</span>
+              <span class="tn chg">GetAdConfig ⚠</span><span class="ta">→</span>
+              <span class="tn aff">广告SDK ✕</span><span class="ta">→</span>
+              <span class="tn aff">广告展示 ✕</span>
+            </div>
+          </td>
+          <td><span class="level-badge medium"><span class="level-icon">🔓</span> 中风险</span></td>
+          <td><span class="adopt-toggle"></span> <span class="adopt-label">采纳</span></td>
+          <td><span class="cover-status uncovered">未覆盖 <select><option>▾</option></select></span></td>
+          <td></td>
+          <td><span class="op-link">展开详情 ›</span></td>
+        </tr>
+        <tr class="detail-panel" id="d3">
+          <td colspan="8">
+            <div class="detail-inner">
+              <div class="attr-section">
+                <div class="attr-title">归因分析 — 为什么这是风险？</div>
+                <div class="cause-chain">
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">1</span>代码变更</div><div class="cause-text"><code>HandleGetAdConfig</code> 返回结构体新增 <code>freeAdPopup</code> 嵌套字段，JSON序列化后体积增加 15%</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">2</span>变更意图</div><div class="cause-text">为醒图端<strong>下发免广弹窗配置</strong>，控制弹窗展示频率和用户白名单</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">3</span>影响推导</div><div class="cause-text">醒图SDK v3.2 <strong>strict 模式解析</strong>，遇到未知字段 <code>freeAdPopup</code> 时直接<strong>抛出 ParseException</strong>，配置对象为 nil</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">4</span>业务后果</div><div class="cause-text">醒图端<strong>全量广告不展示</strong>，降级逻辑展示默认开屏，<strong>点位广告收入归零</strong></div></div></div>
+                </div>
+              </div>
+              <div class="topo-section">
+                <div class="sec-title">受影响核心链路</div>
+                <div class="topo-flow">
+                  <div class="topo-node">醒图客户端</div><div class="topo-arw">→</div>
+                  <div class="topo-node changed">HandleGetAdConfig<span class="node-sub">⚠ 返回结构变更</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">醒图广告SDK<span class="node-sub">✕ ParseException</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">广告展示<span class="node-sub">✕ 全量不展示</span></div>
+                </div>
+                <div class="topo-meta">醒图广告配置链路 · 日均 80万次 · 覆盖醒图全量用户</div>
+              </div>
+              <div class="impact-action">
+                <div class="impact-col">
+                  <div class="col-title">受影响范围</div>
+                  <div class="impact-item"><span class="impact-dot h"></span><div><strong>醒图广告配置链路</strong>：新字段导致SDK解析异常，广告配置对象为nil</div></div>
+                  <div class="impact-item"><span class="impact-dot m"></span><div><strong>降级逻辑</strong>：配置为nil时降级为默认开屏，点位广告收入归零</div></div>
+                </div>
+                <div class="action-col">
+                  <div class="col-title">建议行动</div>
+                  <div class="act-item"><span class="act-ck"></span><span>验证醒图SDK v3.2 对新增字段的兼容性，确认是否需升级SDK</span><span class="act-priority p0">P0</span></div>
+                  <div class="act-item"><span class="act-ck"></span><span>回归醒图端广告配置拉取→解析→展示全链路</span><span class="act-priority p0">P0</span></div>
+                  <div class="act-item"><span class="act-ck"></span><span>新增配置字段兼容性自动化用例</span><span class="act-priority p1">P1</span></div>
+                </div>
+              </div>
+              <div class="guarantee-strip">
+                <div class="guar-item">自动化 <div class="guar-bar"><div class="guar-fill bad" style="width:20%"></div></div> <span class="guar-pct" style="color:var(--red)">20%</span></div>
+                <div class="guar-item">监控 <div class="guar-bar"><div class="guar-fill good" style="width:70%"></div></div> <span class="guar-pct" style="color:var(--green)">70%</span></div>
+                <div class="guar-item">灰度 <div class="guar-bar"><div class="guar-fill warn" style="width:60%"></div></div> <span class="guar-pct" style="color:var(--orange)">60%</span></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- ===== 风险项 4：HandleGetAdConfig ===== -->
+        <tr class="data-row" onclick="toggleDetail('d4')">
+          <td><span class="risk-name-link">广告配置HandleGetAdConfig</span></td>
+          <td><span class="risk-type-tag core-link">核心链路</span></td>
+          <td class="risk-info-cell">
+            <div class="risk-info-summary">变更修改了 <code>HandleGetAdConfig</code> 通用配置下发逻辑，新增免广弹窗开关和频控规则。多端（剪映/醒图/轻颜）同时依赖该接口，<strong>配置格式不兼容将导致多端广告展示异常</strong>。</div>
+            <div class="topo-mini">
+              <span class="tn">配置中心</span><span class="ta">→</span>
+              <span class="tn chg">GetAdConfig ⚠</span><span class="ta">→</span>
+              <span class="tn aff">剪映/醒图/轻颜 ✕</span>
+            </div>
+          </td>
+          <td><span class="level-badge medium"><span class="level-icon">🔓</span> 中风险</span></td>
+          <td><span class="adopt-toggle"></span> <span class="adopt-label">采纳</span></td>
+          <td><span class="cover-status uncovered">未覆盖 <select><option>▾</option></select></span></td>
+          <td></td>
+          <td><span class="op-link">展开详情 ›</span></td>
+        </tr>
+        <tr class="detail-panel" id="d4">
+          <td colspan="8">
+            <div class="detail-inner">
+              <div class="attr-section">
+                <div class="attr-title">归因分析 — 为什么这是风险？</div>
+                <div class="cause-chain">
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">1</span>代码变更</div><div class="cause-text"><code>HandleGetAdConfig</code> 新增 <code>freeAdSwitch</code>（bool）和 <code>freqControlRule</code>（嵌套JSON），影响配置序列化结构</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">2</span>变更意图</div><div class="cause-text">统一下发<strong>免广弹窗开关和频控规则</strong>，支持多端灵活配置</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">3</span>影响推导</div><div class="cause-text">剪映/醒图/轻颜三端SDK版本不一，<strong>低版本SDK遇未知字段行为不一致</strong>：剪映忽略，醒图报错，轻颜截断</div></div></div>
+                  <div class="cause-arrow">→</div>
+                  <div class="cause-step"><div class="cause-box"><div class="cause-label"><span class="sn">4</span>业务后果</div><div class="cause-text">醒图端广告<strong>配置解析失败</strong>全量不展示；轻颜端频控规则<strong>截断后失效</strong>，广告无限弹出；影响面覆盖<strong>三端全量用户</strong></div></div></div>
+                </div>
+              </div>
+              <div class="topo-section">
+                <div class="sec-title">受影响核心链路</div>
+                <div class="topo-flow">
+                  <div class="topo-node">广告配置中心</div><div class="topo-arw">→</div>
+                  <div class="topo-node changed">HandleGetAdConfig<span class="node-sub">⚠ 配置格式变更</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">剪映SDK<span class="node-sub">✓ 忽略新字段</span></div>
+                </div>
+                <div style="height:6px"></div>
+                <div class="topo-flow">
+                  <div class="topo-node">广告配置中心</div><div class="topo-arw">→</div>
+                  <div class="topo-node changed">HandleGetAdConfig<span class="node-sub">⚠ 配置格式变更</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">醒图SDK v3.2<span class="node-sub">✕ ParseException</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">广告不展示<span class="node-sub">✕ 收入归零</span></div>
+                </div>
+                <div style="height:6px"></div>
+                <div class="topo-flow">
+                  <div class="topo-node">广告配置中心</div><div class="topo-arw">→</div>
+                  <div class="topo-node changed">HandleGetAdConfig<span class="node-sub">⚠ 配置格式变更</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">轻颜SDK<span class="node-sub">⚠ JSON截断</span></div><div class="topo-arw">→</div>
+                  <div class="topo-node affected">频控失效<span class="node-sub">✕ 广告无限弹出</span></div>
+                </div>
+                <div class="topo-meta">多端广告配置链路 · 覆盖剪映/醒图/轻颜三端全量用户</div>
+              </div>
+              <div class="impact-action">
+                <div class="impact-col">
+                  <div class="col-title">受影响范围</div>
+                  <div class="impact-item"><span class="impact-dot h"></span><div><strong>醒图端</strong>：strict模式解析失败，广告全量不展示</div></div>
+                  <div class="impact-item"><span class="impact-dot h"></span><div><strong>轻颜端</strong>：频控规则JSON截断，广告无限弹出，用户体验严重受损</div></div>
+                  <div class="impact-item"><span class="impact-dot m"></span><div><strong>剪映端</strong>：忽略新字段，功能不生效但无负面影响</div></div>
+                </div>
+                <div class="action-col">
+                  <div class="col-title">建议行动</div>
+                  <div class="act-item"><span class="act-ck"></span><span>逐端验证SDK对新增字段的兼容性（剪映/醒图/轻颜）</span><span class="act-priority p0">P0</span></div>
+                  <div class="act-item"><span class="act-ck"></span><span>醒图SDK升级或服务端按版本号灰度下发配置</span><span class="act-priority p0">P0</span></div>
+                  <div class="act-item"><span class="act-ck"></span><span>补充多端配置兼容性自动化回归</span><span class="act-priority p1">P1</span></div>
+                </div>
+              </div>
+              <div class="guarantee-strip">
+                <div class="guar-item">自动化 <div class="guar-bar"><div class="guar-fill bad" style="width:25%"></div></div> <span class="guar-pct" style="color:var(--red)">25%</span></div>
+                <div class="guar-item">监控 <div class="guar-bar"><div class="guar-fill good" style="width:85%"></div></div> <span class="guar-pct" style="color:var(--green)">85%</span></div>
+                <div class="guar-item">灰度 <div class="guar-bar"><div class="guar-fill warn" style="width:55%"></div></div> <span class="guar-pct" style="color:var(--orange)">55%</span></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+function switchCat(el) {
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+function toggleDetail(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+</script>
+</body>
+</html>
