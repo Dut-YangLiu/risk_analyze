@@ -25,7 +25,6 @@
   .nav-icon{width:20px;height:20px;border-radius:4px;background:var(--primary);display:flex;align-items:center;justify-content:center;}
   .nav-title{font-size:15px;font-weight:600;}
   .nav-badge{font-size:11px;padding:2px 6px;border-radius:4px;background:var(--danger-bg);color:var(--danger);font-weight:500;}
-  .nav-right{display:flex;align-items:center;gap:8px;}
 
   /* ===== Tab Switcher ===== */
   .tab-bar{background:var(--bg-2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:6px;}
@@ -40,7 +39,6 @@
   /* ===== Meta Bar ===== */
   .meta-bar{padding:12px 24px;background:var(--bg-2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text-3);flex-wrap:wrap;}
   .meta-bar a{color:var(--primary);text-decoration:none;}
-  .meta-bar a:hover{text-decoration:underline;}
 
   /* ===== Quality Overview Cards ===== */
   .overview-row{padding:16px 24px;display:flex;gap:12px;flex-wrap:nowrap;overflow-x:auto;}
@@ -63,56 +61,63 @@
 
   /* ===== Risk Table ===== */
   .risk-table{background:var(--bg-2);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
-  .rt-head{display:grid;grid-template-columns:180px 110px 1fr 100px 90px 80px 90px;padding:10px 16px;background:var(--bg-1);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-3);font-weight:500;align-items:center;gap:8px;}
+  .rt-head{display:grid;grid-template-columns:200px 140px 1fr 120px 90px 80px 90px;padding:10px 16px;background:var(--bg-1);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-3);font-weight:500;align-items:center;gap:8px;}
   .rt-head span:nth-child(2){display:flex;align-items:center;gap:2px;cursor:pointer;}
   .rt-head span:nth-child(2)::after{content:'▼';font-size:8px;}
 
   /* ===== Risk Row ===== */
-  .rt-row{display:grid;grid-template-columns:180px 110px 1fr 100px 90px 80px 90px;padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px;align-items:center;gap:8px;transition:background .15s;cursor:pointer;}
+  .rt-row{display:grid;grid-template-columns:200px 140px 1fr 120px 90px 80px 90px;padding:20px 16px;border-bottom:1px solid var(--border);font-size:13px;align-items:start;gap:8px;transition:background .15s;cursor:pointer;}
   .rt-row:last-child{border-bottom:none;}
   .rt-row:hover{background:#F7F8FF;}
   .rt-row.expanded{background:#F0F4FF;border-bottom-color:var(--primary-light);}
 
-  .rt-name{color:var(--primary);font-weight:500;font-size:13px;}
+  .rt-name{color:var(--primary);font-weight:500;font-size:13px;padding-top:2px;}
   .rt-name:hover{text-decoration:underline;}
 
   /* Risk Type Tags */
-  .rt-type{display:flex;flex-direction:column;gap:2px;}
-  .type-tag{font-size:11px;padding:2px 6px;border-radius:3px;font-weight:500;display:inline-block;white-space:nowrap;}
+  .rt-type-cell{display:flex;flex-direction:column;gap:4px;padding-top:2px;}
+  .type-tag{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:500;display:inline-block;white-space:nowrap;width:fit-content;}
   .tag-core{background:var(--primary-light);color:var(--primary);}
-  .type-sub{font-size:10px;color:var(--text-3);display:flex;align-items:center;gap:3px;padding-left:2px;}
+  .type-sub{font-size:10px;color:var(--text-3);display:flex;align-items:center;gap:3px;padding-left:4px;}
   .type-sub::before{content:'└';color:var(--border);font-size:11px;}
   .sub-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
   .sub-dot-db{background:var(--warning);}
   .sub-dot-func{background:var(--purple);}
   .sub-dot-svc{background:var(--primary);}
 
-  .rt-info{font-size:12px;color:var(--text-2);line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;}
-  .rt-info strong{color:var(--text-1);font-weight:600;}
-  .rt-info .code{font-family:'SF Mono','Menlo',monospace;background:var(--bg-3);padding:0 4px;border-radius:2px;font-size:11px;color:#531DAB;}
+  /* === Risk Info — 简洁双段落 === */
+  .rt-info-wrap{display:flex;flex-direction:column;gap:10px;font-size:12.5px;color:var(--text-2);line-height:1.7;}
+  .rt-info-p{display:flex;flex-direction:column;gap:2px;}
+  .rt-info-title{font-weight:700;color:var(--text-1);font-size:12.5px;}
+  .rt-info-title.t-stable{color:var(--warning);}
+  .rt-info-title.t-func{color:var(--purple);}
+  .rt-info-title.t-svc{color:var(--primary);}
+  .rt-info-text{color:var(--text-2);font-size:12.5px;line-height:1.7;}
+  .rt-info-text .code{font-family:'SF Mono','Menlo',monospace;background:var(--bg-3);padding:0 4px;border-radius:2px;font-size:11.5px;color:#531DAB;}
+  .rt-info-more{color:var(--text-3);font-size:11px;cursor:default;}
 
-  .rt-level{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;position:relative;}
-  .rt-level .rk-tip{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1D2129;color:#fff;border-radius:8px;padding:12px 14px;font-size:11px;font-weight:400;width:240px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);line-height:1.7;}
-  .rt-level .rk-tip::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom:6px solid #1D2129;}
-  .rt-level:hover .rk-tip{display:block;}
+  /* === Risk Level with Score === */
+  .rt-level{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;position:relative;padding-top:2px;white-space:nowrap;}
+  .lv-h{color:var(--danger);}.lv-m{color:var(--warning);}.lv-l{color:var(--success);}
+  .rt-score{font-size:13px;font-weight:700;cursor:pointer;position:relative;border-bottom:1px dashed currentColor;padding-bottom:1px;}
+  .rk-tip{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1D2129;color:#fff;border-radius:8px;padding:12px 14px;font-size:11px;font-weight:400;width:240px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);line-height:1.7;}
+  .rk-tip::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom:6px solid #1D2129;}
+  .rt-score:hover .rk-tip{display:block;}
   .rk-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.1);}
   .rk-row:last-child{border-bottom:none;}
   .rk-row-l{color:rgba(255,255,255,.55);}.rk-row-r{font-weight:600;}
   .rk-total{display:flex;justify-content:space-between;padding:5px 0 0;margin-top:3px;border-top:1px solid rgba(255,255,255,.2);font-weight:700;font-size:12px;}
 
-  .lv-h{color:var(--danger);}.lv-m{color:var(--warning);}.lv-l{color:var(--success);}
-
   /* Toggle Switch */
   .tw{width:34px;height:18px;background:#C9CDD4;border-radius:9px;position:relative;cursor:pointer;transition:all .25s;flex-shrink:0;}
   .tw.on{background:var(--primary);}.tw .dt{width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:all .25s;box-shadow:0 1px 2px rgba(0,0,0,.15);}.tw.on .dt{left:18px;}
-
-  .rt-adopt{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);}
-
+  .rt-adopt{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);padding-top:2px;}
   .cv{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:500;}
   .cv-n{background:var(--danger-bg);color:var(--danger);}
   .cv-y{background:var(--success-bg);color:var(--success);}
+  .rt-cv{padding-top:2px;}
 
-  .rt-action{color:var(--primary);font-size:12px;display:flex;align-items:center;gap:3px;cursor:pointer;white-space:nowrap;}
+  .rt-action{color:var(--primary);font-size:12px;display:flex;align-items:center;gap:3px;cursor:pointer;white-space:nowrap;padding-top:2px;}
   .rt-action:hover{text-decoration:underline;}
   .rt-action svg{transition:transform .2s;}
   .rt-row.expanded .rt-action svg{transform:rotate(180deg);}
@@ -207,9 +212,6 @@
   .diff-add{background:#E8FFEA;}.diff-add .diff-ct{color:#00652E;}
   .diff-del{background:#FFECE8;}.diff-del .diff-ct{color:#A8071A;}
   .diff-ctx{background:var(--bg-2);}
-
-  /* Animation */
-  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
@@ -280,7 +282,6 @@
   </div>
 
   <div class="risk-table" id="riskTable">
-    <!-- Table Header -->
     <div class="rt-head">
       <span>风险项</span>
       <span>风险类型</span>
@@ -294,38 +295,62 @@
     <!-- ======== ROW 1 ======== -->
     <div class="rt-row" data-type="db func" id="r1" onclick="togRow('r1')">
       <span class="rt-name">剪映*获取相册页广告</span>
-      <span class="rt-type"><span class="type-tag tag-core">核心链路</span><span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span><span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span></span>
-      <span class="rt-info"><strong>[稳定性]</strong> <span class="code">GetFrisbeeResult</span> → <span class="code">reward_free_ad_table</span> 调用链新增 <span class="code">SceneRewardFreeAd</span> 分支后，每次请求稳定触发 INSERT 写入P0表，变更未包含写入限流与批量合并机制，明显有DB写热点风险；修正方向：补齐批量合并写入或增加令牌桶限流兜底。<strong>[功能]</strong> 新 case 未校验奖励去重逻辑，广告回调重复触发时可能导致用户重复领取免广奖励。</span>
-      <span class="rt-level lv-m">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div><div class="rk-row"><span class="rk-row-l">操作类型（INSERT）</span><span class="rk-row-r">22.5</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P0）</span><span class="rk-row-r">25</span></div><div class="rk-row"><span class="rk-row-l">数据量级（高频）</span><span class="rk-row-r">16</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FF6B6B;">93.5</span></div></div></span>
+
+      <span class="rt-type-cell">
+        <span class="type-tag tag-core">核心链路</span>
+        <span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span>
+        <span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span>
+      </span>
+
+      <span class="rt-info-wrap">
+        <div class="rt-info-p">
+          <span class="rt-info-title t-stable">[稳定性]</span>
+          <span class="rt-info-text"><span class="code">GetFrisbeeResult</span> → <span class="code">reward_free_ad_table</span> 新增 INSERT 写入P0表，无限流兜底，DB写热点风险</span>
+          <span class="rt-info-more">→...</span>
+        </div>
+        <div class="rt-info-p">
+          <span class="rt-info-title t-func">[功能]</span>
+          <span class="rt-info-text">新 case 未校验奖励去重逻辑（<span class="code">userId+sceneId</span> 无唯一约束），可能导致重复领取</span>
+          <span class="rt-info-more">→...</span>
+        </div>
+      </span>
+
+      <span class="rt-level lv-m">
+        🔶 中风险
+        <span class="rt-score" style="color:var(--warning);">93.5
+          <div class="rk-tip">
+            <div style="font-weight:600;margin-bottom:6px;color:#fff;">风险评分归因</div>
+            <div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div>
+            <div class="rk-row"><span class="rk-row-l">操作类型（INSERT）</span><span class="rk-row-r">22.5</span></div>
+            <div class="rk-row"><span class="rk-row-l">库表等级（P0）</span><span class="rk-row-r">25</span></div>
+            <div class="rk-row"><span class="rk-row-l">数据量级（高频）</span><span class="rk-row-r">16</span></div>
+            <div class="rk-total"><span>综合评分</span><span style="color:#FF6B6B;">93.5</span></div>
+          </div>
+        </span>
+      </span>
+
       <span class="rt-adopt"><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div>采纳</span>
-      <span><span class="cv cv-n">未覆盖</span></span>
+      <span class="rt-cv"><span class="cv cv-n">未覆盖</span></span>
       <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     </div>
+
+    <!-- Detail Panel 1 -->
     <div class="detail-panel" id="d1">
       <div class="chain-area">
-        <div class="chain-head">
-          <div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-direct">● 直接影响DB</span></div>
-        </div>
-        <div class="chain-canvas">
-          <div class="chain-flow">
-            <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c1')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">新增 case 分支 (L303-305)</div></div><span class="nd-lbl">📝 代码变更</span></div>
-            <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">触发调用</span></div>
-            <div class="nd"><div class="nd-box nd-svc"><div>GetGroMoreAd</div><div class="nd-sub">faceu.commerce.ad_api</div></div><span class="nd-lbl">🔌 链路入口</span></div>
-            <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">路由分发</span></div>
-            <div class="nd"><div class="nd-box nd-func"><div>GetFrisbeeResult</div><div class="nd-sub">app/service/frisbee/frisbee.go</div></div><span class="nd-lbl">⚡ 变更函数</span></div>
-            <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">INSERT 写入</span></div>
-            <div class="nd-db-wrap">
-              <div class="db-cylinder"><span class="db-level lv-p0">P0</span>
-                <svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFD6CC"/><rect x="12" y="18" width="136" height="60" fill="#FFE4DE"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#FFD6CC"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFBCAB" stroke="#F53F3F" stroke-width="2"/><path d="M12 18V78" stroke="#F53F3F" stroke-width="2"/><path d="M148 18V78" stroke="#F53F3F" stroke-width="2"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#F53F3F" stroke-width="2" fill="none"/></svg>
-                <div class="db-cyl-content"><div class="db-cyl-name" style="color:#CB2634;">reward_free_ad_table</div><div class="db-cyl-desc" style="color:#CB2634;">免广奖励记录表</div><div class="db-cyl-ops"><span class="op-t op-i">INSERT</span><span class="op-t op-s">SELECT</span></div></div>
-              </div><span class="nd-lbl">💾 核心DB表</span>
-            </div>
-          </div>
-        </div>
+        <div class="chain-head"><div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-direct">● 直接影响DB</span></div></div>
+        <div class="chain-canvas"><div class="chain-flow">
+          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c1')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">新增 case 分支 (L303-305)</div></div><span class="nd-lbl">📝 代码变更</span></div>
+          <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">触发调用</span></div>
+          <div class="nd"><div class="nd-box nd-svc"><div>GetGroMoreAd</div><div class="nd-sub">faceu.commerce.ad_api</div></div><span class="nd-lbl">🔌 链路入口</span></div>
+          <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">路由分发</span></div>
+          <div class="nd"><div class="nd-box nd-func"><div>GetFrisbeeResult</div><div class="nd-sub">app/service/frisbee/frisbee.go</div></div><span class="nd-lbl">⚡ 变更函数</span></div>
+          <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">INSERT 写入</span></div>
+          <div class="nd-db-wrap"><div class="db-cylinder"><span class="db-level lv-p0">P0</span><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFD6CC"/><rect x="12" y="18" width="136" height="60" fill="#FFE4DE"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#FFD6CC"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFBCAB" stroke="#F53F3F" stroke-width="2"/><path d="M12 18V78" stroke="#F53F3F" stroke-width="2"/><path d="M148 18V78" stroke="#F53F3F" stroke-width="2"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#F53F3F" stroke-width="2" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#CB2634;">reward_free_ad_table</div><div class="db-cyl-desc" style="color:#CB2634;">免广奖励记录表</div><div class="db-cyl-ops"><span class="op-t op-i">INSERT</span><span class="op-t op-s">SELECT</span></div></div></div><span class="nd-lbl">💾 核心DB表</span></div>
+        </div></div>
       </div>
       <div class="cot-area">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">AI 变更影响解释</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-body"><strong>[稳定性]</strong> <span class="code">GetFrisbeeResult</span> → <span class="code">reward_free_ad_table</span> 调用链新增 <span class="code">SceneRewardFreeAd</span> 分支后，每次请求稳定触发 INSERT 写入P0表，变更未包含写入限流与批量合并机制，明显有DB写热点风险；修正方向：补齐批量合并写入（按 <span class="code">userId</span> 聚合后单次 bulk INSERT），或增加令牌桶限流兜底。<br/><br/><strong>[功能]</strong> 新 case 仅映射 <span class="code">eventName</span> / <span class="code">taskKey</span>，未校验奖励去重逻辑（同一 <span class="code">userId + sceneId</span> 重复写入无唯一约束），广告回调重复触发时可能导致用户重复领取免广奖励；修正方向：INSERT 前增加 <span class="code">userId+sceneId+traceId</span> 幂等校验，或在表级别增加唯一索引兜底。</div>
+        <div class="cot-body"><strong>[稳定性/DB影响]</strong> <span class="code">GetFrisbeeResult</span> → <span class="code">reward_free_ad_table</span> 调用链新增 <span class="code">SceneRewardFreeAd</span> 分支后，每次请求稳定触发 INSERT 写入P0表，变更未包含写入限流与批量合并机制，明显有DB写热点风险；修正方向：补齐批量合并写入（按 <span class="code">userId</span> 聚合后单次 bulk INSERT），或增加令牌桶限流兜底。<br/><br/><strong>[功能影响]</strong> 新 case 仅映射 <span class="code">eventName</span> / <span class="code">taskKey</span>，未校验奖励去重逻辑（同一 <span class="code">userId + sceneId</span> 重复写入无唯一约束），广告回调重复触发时可能导致用户重复领取免广奖励；修正方向：INSERT 前增加 <span class="code">userId+sceneId+traceId</span> 幂等校验，或在表级别增加唯一索引兜底。</div>
       </div>
       <div class="score-bar">
         <span class="score-lbl">综合风险</span>
@@ -338,91 +363,180 @@
     <!-- ======== ROW 2 ======== -->
     <div class="rt-row" data-type="db func" id="r2" onclick="togRow('r2')">
       <span class="rt-name">剪映*获取相册页广告recall</span>
-      <span class="rt-type"><span class="type-tag tag-core">核心链路</span><span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span><span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span></span>
-      <span class="rt-info"><strong>[功能]</strong> <span class="code">LoadRewardConfig</span> → <span class="code">frisbee_reward_config</span> 调用链，新增场景需要配置表中对应的奖励策略行，但代码变更未包含配置写入，上线后该场景命中降级逻辑，导致免广弹窗不弹出；修正方向：上线前补齐场景配置。<strong>[稳定性]</strong> 新场景缓存冷启，穿透到DB SELECT，高峰期可能造成DB读压力回归。</span>
-      <span class="rt-level lv-m">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">14</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">62.0</span></div></div></span>
+
+      <span class="rt-type-cell">
+        <span class="type-tag tag-core">核心链路</span>
+        <span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span>
+        <span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span>
+      </span>
+
+      <span class="rt-info-wrap">
+        <div class="rt-info-p">
+          <span class="rt-info-title t-func">[功能]</span>
+          <span class="rt-info-text"><span class="code">LoadRewardConfig</span> → <span class="code">frisbee_reward_config</span> 新场景缺少配置行，命中降级导致免广弹窗不弹出</span>
+          <span class="rt-info-more">→...</span>
+        </div>
+        <div class="rt-info-p">
+          <span class="rt-info-title t-stable">[稳定性]</span>
+          <span class="rt-info-text">新场景缓存冷启，<span class="code">LoadRewardConfig</span> 每次穿透到 DB SELECT，高峰期可能造成读压力回归</span>
+          <span class="rt-info-more">→...</span>
+        </div>
+      </span>
+
+      <span class="rt-level lv-m">
+        🔶 中风险
+        <span class="rt-score" style="color:var(--warning);">62.0
+          <div class="rk-tip">
+            <div style="font-weight:600;margin-bottom:6px;color:#fff;">风险评分归因</div>
+            <div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div>
+            <div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div>
+            <div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div>
+            <div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">14</span></div>
+            <div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">62.0</span></div>
+          </div>
+        </span>
+      </span>
+
       <span class="rt-adopt"><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div>采纳</span>
-      <span><span class="cv cv-n">未覆盖</span></span>
+      <span class="rt-cv"><span class="cv cv-n">未覆盖</span></span>
       <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     </div>
+
+    <!-- Detail Panel 2 -->
     <div class="detail-panel" id="d2">
       <div class="chain-area">
-        <div class="chain-head">
-          <div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-indirect">◐ 间接影响DB</span></div>
-        </div>
+        <div class="chain-head"><div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-indirect">◐ 间接影响DB</span></div></div>
         <div class="chain-canvas"><div class="chain-flow">
           <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c2')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">路由逻辑变更</div></div><span class="nd-lbl">📝 代码变更</span></div>
           <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">间接触发</span></div>
           <div class="nd"><div class="nd-box nd-svc"><div>HandleRecall</div><div class="nd-sub">ad_recall_service</div></div><span class="nd-lbl">🔌 下游接口</span></div>
-          <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">配置加载</span></div>
-          <div class="nd"><div class="nd-box nd-func"><div>LoadRewardConfig</div><div class="nd-sub">service/reward/config.go</div></div><span class="nd-lbl">⚡ 间接调用</span></div>
-          <div class="ar"><div class="ar-line ar-solid"></div><span class="ar-lbl">SELECT 读取</span></div>
-          <div class="nd-db-wrap"><div class="db-cylinder"><span class="db-level lv-p1">P1</span><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFE8CC"/><rect x="12" y="18" width="136" height="60" fill="#FFF3E0"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#FFE8CC"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFDDB3" stroke="#FF7D00" stroke-width="2"/><path d="M12 18V78" stroke="#FF7D00" stroke-width="2"/><path d="M148 18V78" stroke="#FF7D00" stroke-width="2"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#FF7D00" stroke-width="2" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#B25000;">frisbee_reward_config</div><div class="db-cyl-desc" style="color:#B25000;">飞盘奖励配置表</div><div class="db-cyl-ops"><span class="op-t op-s">SELECT</span></div></div></div><span class="nd-lbl">💾 关联DB表</span></div>
+          <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">配置读取</span></div>
+          <div class="nd"><div class="nd-box nd-func"><div>LoadRewardConfig</div><div class="nd-sub">app/service/reward/config.go</div></div><span class="nd-lbl">⚡ 间接函数</span></div>
+          <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">SELECT 查询</span></div>
+          <div class="nd-db-wrap"><div class="db-cylinder"><span class="db-level lv-p1">P1</span><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFE8CC"/><rect x="12" y="18" width="136" height="60" fill="#FFF2E0"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#FFE8CC"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFD699" stroke="#FF7D00" stroke-width="2"/><path d="M12 18V78" stroke="#FF7D00" stroke-width="2"/><path d="M148 18V78" stroke="#FF7D00" stroke-width="2"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#FF7D00" stroke-width="2" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#A35200;">frisbee_reward_config</div><div class="db-cyl-desc" style="color:#A35200;">奖励配置表</div><div class="db-cyl-ops"><span class="op-t op-s">SELECT</span></div></div></div><span class="nd-lbl">💾 配置DB表</span></div>
         </div></div>
       </div>
       <div class="cot-area">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">AI 变更影响解释</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-body"><strong>[功能]</strong> <span class="code">LoadRewardConfig</span> → <span class="code">frisbee_reward_config</span> 调用链，新增 <span class="code">SceneRewardFreeAd</span> 场景需要配置表中对应的奖励策略行，但代码变更未包含配置写入，上线后该场景将命中降级逻辑，导致用户看完广告后免广弹窗不弹出；修正方向：上线前在 <span class="code">frisbee_reward_config</span> 补齐场景配置，或在代码侧增加配置缺失时的明确报错告警。<br/><br/><strong>[稳定性]</strong> 新场景首次请求缓存冷启，<span class="code">LoadRewardConfig</span> 每次穿透到 DB SELECT，高峰期可能造成 DB 读压力回归；修正方向：恢复/补齐缓存预热机制（至少将 config 结果做本地/Redis 缓存，TTL+jitter），必要时按 <span class="code">sceneId</span> 分 key。</div>
+        <div class="cot-body"><strong>[功能影响]</strong> <span class="code">LoadRewardConfig</span> → <span class="code">frisbee_reward_config</span> 调用链，新增场景需要配置表中对应的奖励策略行，但代码变更未包含配置写入，上线后命中降级逻辑，导致免广弹窗不弹出；修正方向：上线前补齐场景配置。<br/><br/><strong>[稳定性/DB影响]</strong> 新场景首次请求缓存冷启，<span class="code">LoadRewardConfig</span> 每次穿透到 DB SELECT，高峰期可能造成 DB 读压力回归；修正方向：恢复/补齐缓存预热机制（config 结果做本地/Redis 缓存，TTL+jitter），按 <span class="code">sceneId</span> 分 key。</div>
       </div>
       <div class="score-bar">
-        <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-med" style="width:62%;"></div></div>
+        <span class="score-lbl">综合风险</span>
+        <div class="score-track"><div class="score-fill sf-med" style="width:62%;"></div></div>
         <div class="score-wrap"><span class="score-val" style="color:var(--warning);">62.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">14</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">62.0</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">SELECT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--warning);">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">中频</span>量级</div></div>
+        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">SELECT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--warning);">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--warning);">中频</span>量级</div></div>
       </div>
     </div>
 
     <!-- ======== ROW 3 ======== -->
     <div class="rt-row" data-type="db func" id="r3" onclick="togRow('r3')">
       <span class="rt-name">醒图*获取广告配置</span>
-      <span class="rt-type"><span class="type-tag tag-core">核心链路</span><span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span><span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span></span>
-      <span class="rt-info"><strong>[稳定性]</strong> <span class="code">HandleGetAdConfig</span> → <span class="code">ad_placement_config</span> 调用链，该表为醒图/剪映共用表，新场景增量查询叠加现有流量，变为每次请求稳定触发多次DB查询，缓存失效时可能引发慢查询影响双端广告加载；修正方向：恢复/补齐等价缓存层。<strong>[功能]</strong> 若广告位配置未覆盖新场景，醒图侧可能出现空广告位或兜底素材异常。</span>
-      <span class="rt-level lv-m">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">17.5</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">10</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">55.5</span></div></div></span>
+
+      <span class="rt-type-cell">
+        <span class="type-tag tag-core">核心链路</span>
+        <span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span>
+        <span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span>
+      </span>
+
+      <span class="rt-info-wrap">
+        <div class="rt-info-p">
+          <span class="rt-info-title t-stable">[稳定性]</span>
+          <span class="rt-info-text"><span class="code">HandleGetAdConfig</span> → <span class="code">ad_config_table</span> 新分支扩大 UPDATE 写入面，高峰并发下可能触发行锁竞争</span>
+          <span class="rt-info-more">→...</span>
+        </div>
+        <div class="rt-info-p">
+          <span class="rt-info-title t-func">[功能]</span>
+          <span class="rt-info-text">新增广告位枚举未同步客户端版本校验，低版本客户端可能渲染异常</span>
+          <span class="rt-info-more">→...</span>
+        </div>
+      </span>
+
+      <span class="rt-level lv-m">
+        🔶 中风险
+        <span class="rt-score" style="color:var(--warning);">71.0
+          <div class="rk-tip">
+            <div style="font-weight:600;margin-bottom:6px;color:#fff;">风险评分归因</div>
+            <div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div>
+            <div class="rk-row"><span class="rk-row-l">操作类型（UPDATE）</span><span class="rk-row-r">17.5</span></div>
+            <div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div>
+            <div class="rk-row"><span class="rk-row-l">数据量级（低频）</span><span class="rk-row-r">3.5</span></div>
+            <div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">71.0</span></div>
+          </div>
+        </span>
+      </span>
+
       <span class="rt-adopt"><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div>采纳</span>
-      <span><span class="cv cv-n">未覆盖</span></span>
+      <span class="rt-cv"><span class="cv cv-n">未覆盖</span></span>
       <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     </div>
+
+    <!-- Detail Panel 3 -->
     <div class="detail-panel" id="d3">
       <div class="chain-area">
-        <div class="chain-head">
-          <div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-indirect">◐ 间接影响DB</span></div>
-        </div>
+        <div class="chain-head"><div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-direct">● 直接影响DB</span></div></div>
         <div class="chain-canvas"><div class="chain-flow">
-          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c3')"><div>+ RewardFreeAd 路由</div><div class="nd-sub">影响广告配置读取</div></div><span class="nd-lbl">📝 代码变更</span></div>
-          <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">间接触发</span></div>
-          <div class="nd"><div class="nd-box nd-svc"><div>HandleGetAdConfig</div><div class="nd-sub">ad_config_service</div></div><span class="nd-lbl">🔌 下游接口</span></div>
-          <div class="ar"><div class="ar-line ar-solid"></div><span class="ar-lbl">SELECT 读取</span></div>
-          <div class="nd-db-wrap"><div class="db-cylinder"><span class="db-level lv-p1">P1</span><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFE8CC"/><rect x="12" y="18" width="136" height="60" fill="#FFF3E0"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#FFE8CC"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFDDB3" stroke="#FF7D00" stroke-width="2"/><path d="M12 18V78" stroke="#FF7D00" stroke-width="2"/><path d="M148 18V78" stroke="#FF7D00" stroke-width="2"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#FF7D00" stroke-width="2" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#B25000;">ad_placement_config</div><div class="db-cyl-desc" style="color:#B25000;">广告位配置表（醒图/剪映共用）</div><div class="db-cyl-ops"><span class="op-t op-s">SELECT</span></div></div></div><span class="nd-lbl">💾 关联DB表</span></div>
+          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c3')"><div>+ AdSlotTypeReward</div><div class="nd-sub">新增广告位类型 (L89)</div></div><span class="nd-lbl">📝 代码变更</span></div>
+          <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">触发调用</span></div>
+          <div class="nd"><div class="nd-box nd-svc"><div>HandleGetAdConfig</div><div class="nd-sub">faceu.commerce.ad_api</div></div><span class="nd-lbl">🔌 链路入口</span></div>
+          <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">UPDATE 写入</span></div>
+          <div class="nd-db-wrap"><div class="db-cylinder"><span class="db-level lv-p1">P1</span><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFE8CC"/><rect x="12" y="18" width="136" height="60" fill="#FFF2E0"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#FFE8CC"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFD699" stroke="#FF7D00" stroke-width="2"/><path d="M12 18V78" stroke="#FF7D00" stroke-width="2"/><path d="M148 18V78" stroke="#FF7D00" stroke-width="2"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#FF7D00" stroke-width="2" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#A35200;">ad_config_table</div><div class="db-cyl-desc" style="color:#A35200;">广告配置表</div><div class="db-cyl-ops"><span class="op-t op-i">UPDATE</span><span class="op-t op-s">SELECT</span></div></div></div><span class="nd-lbl">💾 配置DB表</span></div>
         </div></div>
       </div>
       <div class="cot-area">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">AI 变更影响解释</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-body"><strong>[稳定性]</strong> <span class="code">HandleGetAdConfig</span> → <span class="code">ad_placement_config</span> 调用链，该表为醒图/剪映共用表，新场景带来的增量查询叠加现有流量，变为每次请求稳定触发多次 DB 查询（广告位列表 + 场景映射），缓存失效时可能引发慢查询影响双端广告加载；修正方向：恢复/补齐等价缓存层（至少把 "placement IDs + scene mapping" 聚合结果做本地/Redis 缓存，TTL+jitter，必要时按 <span class="code">appId/placementId</span> 分 key）。<br/><br/><strong>[功能]</strong> 若广告位配置未覆盖新奖励场景的 <span class="code">placementId</span>，醒图侧可能出现空广告位或兜底素材展示异常；修正方向：上线前确认 <span class="code">ad_placement_config</span> 已包含新场景对应的广告位行。</div>
+        <div class="cot-body"><strong>[稳定性/DB影响]</strong> <span class="code">HandleGetAdConfig</span> 新增 <span class="code">AdSlotTypeReward</span> 广告位类型后，配置变更时对 <span class="code">ad_config_table</span> 的 UPDATE 操作扩大了写入面，高峰并发下可能触发行锁竞争；修正方向：UPDATE 语句增加乐观锁版本号校验，避免热行竞争。<br/><br/><strong>[功能影响]</strong> 新增广告位枚举值未同步客户端版本校验逻辑，低版本 SDK 请求到未知的 slot type 时 JSON 反序列化可能异常，导致广告渲染失败；修正方向：服务端对低版本请求做 slot type 降级映射。</div>
       </div>
       <div class="score-bar">
-        <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-med" style="width:55.5%;"></div></div>
-        <div class="score-wrap"><span class="score-val" style="color:var(--warning);">55.5</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">17.5</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">10</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">55.5</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">SELECT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--warning);">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">中频</span>量级</div></div>
+        <span class="score-lbl">综合风险</span>
+        <div class="score-track"><div class="score-fill sf-med" style="width:71%;"></div></div>
+        <div class="score-wrap"><span class="score-val" style="color:var(--warning);">71.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div><div class="rk-row"><span class="rk-row-l">操作类型（UPDATE）</span><span class="rk-row-r">17.5</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（低频）</span><span class="rk-row-r">3.5</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">71.0</span></div></div></div>
+        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--danger);">直接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--warning);">UPDATE</span>操作</div><div class="sf"><span class="sfv" style="color:var(--warning);">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--success);">低频</span>量级</div></div>
       </div>
     </div>
 
-    <!-- ======== ROW 4: No DB ======== -->
+    <!-- ======== ROW 4 ======== -->
     <div class="rt-row" data-type="svc" id="r4" onclick="togRow('r4')">
       <span class="rt-name">剪映*获取广告配置</span>
-      <span class="rt-type"><span class="type-tag tag-core">核心链路</span><span class="type-sub"><span class="sub-dot sub-dot-svc"></span>服务功能影响</span></span>
-      <span class="rt-info"><strong>[稳定性]</strong> <span class="code">SceneRewardFreeAd</span> 新增路由分支扩大了 <span class="code">HandleGetAdConfig</span> 的调用面，新场景流量叠加后该接口的 P99 延迟可能上升，存在链路可用性风险；修正方向：在路由层对新场景增加独立限流策略，或拆分接口避免影响存量广告配置请求。接口入参与返回结构未变更，无功能兼容性风险。</span>
-      <span class="rt-level lv-m">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（无DB）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">库表等级（—）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">数据量级（—）</span><span class="rk-row-r">17</span></div><div class="rk-total"><span>综合评分</span><span style="color:#86909C;">35.0</span></div></div></span>
+
+      <span class="rt-type-cell">
+        <span class="type-tag tag-core">核心链路</span>
+        <span class="type-sub"><span class="sub-dot sub-dot-svc"></span>服务功能影响</span>
+      </span>
+
+      <span class="rt-info-wrap">
+        <div class="rt-info-p">
+          <span class="rt-info-title t-stable">[稳定性]</span>
+          <span class="rt-info-text"><span class="code">SceneRewardFreeAd</span> 新增路由分支扩大 <span class="code">HandleGetAdConfig</span> 调用面，P99 延迟可能上升</span>
+          <span class="rt-info-more">→...</span>
+        </div>
+      </span>
+
+      <span class="rt-level lv-m">
+        🔶 中风险
+        <span class="rt-score" style="color:var(--text-2);">35.0
+          <div class="rk-tip">
+            <div style="font-weight:600;margin-bottom:6px;color:#fff;">风险评分归因</div>
+            <div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div>
+            <div class="rk-row"><span class="rk-row-l">操作类型（无DB）</span><span class="rk-row-r">0</span></div>
+            <div class="rk-row"><span class="rk-row-l">库表等级（—）</span><span class="rk-row-r">0</span></div>
+            <div class="rk-row"><span class="rk-row-l">数据量级（—）</span><span class="rk-row-r">17</span></div>
+            <div class="rk-total"><span>综合评分</span><span style="color:#86909C;">35.0</span></div>
+          </div>
+        </span>
+      </span>
+
       <span class="rt-adopt"><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div>采纳</span>
-      <span><span class="cv cv-n">未覆盖</span></span>
+      <span class="rt-cv"><span class="cv cv-n">未覆盖</span></span>
       <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     </div>
+
+    <!-- Detail Panel 4 -->
     <div class="detail-panel" id="d4">
       <div class="chain-area">
-        <div class="chain-head">
-          <div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-none">○ 无DB影响</span></div>
-        </div>
+        <div class="chain-head"><div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-none">✓ 无DB影响</span></div></div>
         <div class="chain-canvas"><div class="chain-flow">
-          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c4')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">路由逻辑变更</div></div><span class="nd-lbl">📝 代码变更</span></div>
-          <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">间接触发</span></div>
+          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c4')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">路由分支变更</div></div><span class="nd-lbl">📝 代码变更</span></div>
+          <div class="ar"><div class="ar-line ar-solid"></div><span class="ar-lbl">间接触发</span></div>
           <div class="nd"><div class="nd-box nd-svc"><div>HandleGetAdConfig</div><div class="nd-sub">faceu.commerce.ad_api</div></div><span class="nd-lbl">🔌 链路入口</span></div>
           <div class="ar"><div class="ar-line ar-dashed"></div><span class="ar-lbl" style="color:var(--success);">✓ 无DB操作</span></div>
           <div class="nd-db-wrap"><div class="db-cylinder" style="opacity:.4;"><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#E8FFEA"/><rect x="12" y="18" width="136" height="60" fill="#F0FFF2"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#E8FFEA"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#D5F5D8" stroke="#00B42A" stroke-width="2" stroke-dasharray="6 4"/><path d="M12 18V78" stroke="#00B42A" stroke-width="2" stroke-dasharray="6 4"/><path d="M148 18V78" stroke="#00B42A" stroke-width="2" stroke-dasharray="6 4"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#00B42A" stroke-width="2" stroke-dasharray="6 4" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#009A29;">— 无核心DB影响 —</div></div></div><span class="nd-lbl" style="color:var(--success);">✅ 安全</span></div>
@@ -430,14 +544,16 @@
       </div>
       <div class="cot-area">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">AI 变更影响解释</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-body"><strong>[稳定性]</strong> <span class="code">SceneRewardFreeAd</span> 新增路由分支扩大了 <span class="code">HandleGetAdConfig</span> 的调用面，新场景流量叠加后该接口的 P99 延迟可能上升，存在链路可用性风险；修正方向：在路由层对新场景增加独立限流策略，或拆分接口避免影响存量广告配置请求。<br/><br/>接口入参与返回结构未变更，无功能兼容性风险。经静态数据流分析和调用链追踪，该路径<span class="hl">未涉及任何核心DB库表操作</span>，风险仅限于接口层面的可用性影响。</div>
+        <div class="cot-body"><strong>[稳定性/服务影响]</strong> <span class="code">SceneRewardFreeAd</span> 新增路由分支扩大了 <span class="code">HandleGetAdConfig</span> 的调用面，新场景流量叠加后该接口的 P99 延迟可能上升，存在链路可用性风险；修正方向：在路由层对新场景增加独立限流策略，或拆分接口避免影响存量广告配置请求。<br/><br/>接口入参与返回结构未变更，无功能兼容性风险。经静态数据流分析和调用链追踪，该路径<span class="hl">未涉及任何核心DB库表操作</span>，风险仅限于接口层面的可用性影响。</div>
       </div>
       <div class="score-bar">
-        <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-low" style="width:35%;"></div></div>
+        <span class="score-lbl">综合风险</span>
+        <div class="score-track"><div class="score-fill sf-low" style="width:35%;"></div></div>
         <div class="score-wrap"><span class="score-val" style="color:var(--text-2);">35.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（无DB）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">库表等级（—）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">数据量级（—）</span><span class="rk-row-r">17</span></div><div class="rk-total"><span>综合评分</span><span style="color:#86909C;">35.0</span></div></div></div>
         <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">无</span>DB操作</div><div class="sf"><span class="sfv" style="color:var(--text-3);">—</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">—</span>量级</div></div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -466,7 +582,7 @@
       <div class="diff-line diff-ctx"><span class="diff-ln">309</span><span class="diff-ct">}</span></div>
       <div class="diff-line diff-ctx"><span class="diff-ln"></span><span class="diff-ct"></span></div>
       <div class="diff-line diff-add"><span class="diff-ln">320</span><span class="diff-ct">+func (s *FrisbeeService) handleRewardFreeAd(ctx context.Context, scene string) (*Result, error) {</span></div>
-      <div class="diff-line diff-add"><span class="diff-ln">321</span><span class="diff-ct">+   event := &RewardEvent{</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">321</span><span class="diff-ct">+   event := &amp;RewardEvent{</span></div>
       <div class="diff-line diff-add"><span class="diff-ln">322</span><span class="diff-ct">+       EventName: "free_ad_reward",</span></div>
       <div class="diff-line diff-add"><span class="diff-ln">323</span><span class="diff-ct">+       TaskKey:   "ad_free_" + scene,</span></div>
       <div class="diff-line diff-add"><span class="diff-ln">324</span><span class="diff-ct">+   }</span></div>
@@ -484,7 +600,6 @@ function togRow(id) {
   var row = document.getElementById(id);
   var detail = document.getElementById('d' + id.substring(1));
   var isExpanded = row.classList.contains('expanded');
-  // close all
   document.querySelectorAll('.rt-row').forEach(function(r){r.classList.remove('expanded');});
   document.querySelectorAll('.detail-panel').forEach(function(d){d.classList.remove('show');});
   if (!isExpanded) {
@@ -500,16 +615,13 @@ function filterRows(type, btn) {
     var detail = document.getElementById('d' + r.id.substring(1));
     if (type === 'all') {
       r.style.display = '';
-      detail.style.display = '';
+      if(detail) detail.style.display = '';
     } else {
       var types = r.getAttribute('data-type').split(' ');
       var match = types.indexOf(type) !== -1;
       r.style.display = match ? '' : 'none';
-      detail.style.display = match ? '' : 'none';
-      if (!match) {
-        r.classList.remove('expanded');
-        detail.classList.remove('show');
-      }
+      if(detail) detail.style.display = match ? '' : 'none';
+      if (!match) { r.classList.remove('expanded'); if(detail) detail.classList.remove('show'); }
     }
   });
 }
