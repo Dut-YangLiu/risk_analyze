@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>核心链路风险明细</title>
+<title>风险明细页 · RD 自测</title>
 <style>
   :root {
     --primary:#3370FF;--primary-light:#E1EAFF;--primary-dark:#245BDB;
@@ -19,272 +19,291 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:var(--bg-1);color:var(--text-1);line-height:1.6;}
 
-  .top-nav{background:var(--bg-2);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.04);}
-  .nav-left{display:flex;align-items:center;gap:12px;}
-  .nav-back{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:var(--text-2);transition:all .2s;}
-  .nav-back:hover{background:var(--bg-3);}
-  .nav-tabs{display:flex;gap:4px;}
-  .nav-tab{padding:6px 16px;border-radius:6px;font-size:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
-  .nav-tab.active{background:var(--primary-light);color:var(--primary);font-weight:600;}
-  .nav-tab:not(.active){color:var(--text-2);}
-  .nav-tab:not(.active):hover{background:var(--bg-3);}
-  .sb{font-size:11px;padding:1px 6px;border-radius:4px;font-weight:500;}
-  .sb-r{background:var(--danger-bg);color:var(--danger);}.sb-g{background:var(--success-bg);color:var(--success);}
-  .nav-right{display:flex;align-items:center;gap:12px;}
-  .nav-btn{padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;border:none;color:#fff;background:var(--warning);transition:all .2s;}
-  .nav-btn:hover{opacity:.9;}
+  /* ===== Top Nav ===== */
+  .top-nav{background:var(--bg-2);border-bottom:1px solid var(--border);padding:0 24px;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .nav-left{display:flex;align-items:center;gap:10px;}
+  .nav-icon{width:20px;height:20px;border-radius:4px;background:var(--primary);display:flex;align-items:center;justify-content:center;}
+  .nav-title{font-size:15px;font-weight:600;}
+  .nav-badge{font-size:11px;padding:2px 6px;border-radius:4px;background:var(--danger-bg);color:var(--danger);font-weight:500;}
+  .nav-right{display:flex;align-items:center;gap:8px;}
 
-  .header-info{background:var(--bg-2);padding:16px 24px;border-bottom:1px solid var(--border);}
-  .header-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--text-3);}
-  .header-meta a{color:var(--primary);text-decoration:none;}
+  /* ===== Tab Switcher ===== */
+  .tab-bar{background:var(--bg-2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:6px;}
+  .tab-item{padding:12px 16px;font-size:13px;color:var(--text-2);cursor:pointer;position:relative;transition:all .2s;}
+  .tab-item.active{color:var(--primary);font-weight:600;}
+  .tab-item.active::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:2px;background:var(--primary);border-radius:1px;}
+  .tab-item:hover:not(.active){color:var(--text-1);}
+  .tab-badge{font-size:10px;padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:500;}
+  .tb-r{background:var(--danger-bg);color:var(--danger);}
+  .tb-g{background:var(--success-bg);color:var(--success);}
 
-  .stats-row{padding:20px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-  .stat-card{background:var(--bg-2);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-1);border:1px solid var(--border);transition:all .3s;}
-  .stat-card:hover{box-shadow:var(--shadow-2);transform:translateY(-2px);}
-  .sc-h{font-size:13px;color:var(--text-3);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
-  .qg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-  .qi{text-align:center;padding:10px 6px;border-radius:var(--radius);background:var(--bg-1);}
-  .qr{width:52px;height:52px;border-radius:50%;margin:0 auto 6px;position:relative;display:flex;align-items:center;justify-content:center;}
-  .qr svg{position:absolute;}.qv{font-size:13px;font-weight:700;z-index:1;}
-  .ql{font-size:11px;color:var(--text-2);}.qs{font-size:10px;color:var(--text-3);margin-top:2px;}
-  .cd{color:var(--danger);}.cs{color:var(--success);}.cw{color:var(--warning);}
-  .ro{display:flex;align-items:center;gap:20px;}
-  .donut{width:90px;height:90px;position:relative;flex-shrink:0;}
-  .donut-c{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
-  .donut-n{font-size:26px;font-weight:700;}.donut-l{font-size:10px;color:var(--text-3);}
-  .leg{display:flex;flex-direction:column;gap:5px;}
-  .li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2);}
-  .ld{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-  .al{display:flex;flex-direction:column;gap:10px;}
-  .ai{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-1);border-radius:var(--radius);font-size:13px;color:var(--text-2);cursor:pointer;transition:all .2s;border:1px solid transparent;}
-  .ai:hover{border-color:var(--primary);background:var(--primary-light);color:var(--primary);}
-  .ai-ic{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
-  .ai-btn{margin-left:auto;padding:4px 12px;border-radius:4px;font-size:12px;color:var(--primary);background:var(--primary-light);cursor:pointer;border:none;transition:all .2s;white-space:nowrap;}
-  .ai-btn:hover{background:var(--primary);color:#fff;}
+  /* ===== Meta Bar ===== */
+  .meta-bar{padding:12px 24px;background:var(--bg-2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text-3);flex-wrap:wrap;}
+  .meta-bar a{color:var(--primary);text-decoration:none;}
+  .meta-bar a:hover{text-decoration:underline;}
 
-  .risk-sec{padding:0 24px 24px;}
-  .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .st{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;}
-  .sc{display:flex;gap:8px;}
-  .fb{padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--bg-2);color:var(--text-2);transition:all .2s;}
-  .fb:hover{border-color:var(--primary);color:var(--primary);}
-  .fb.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary);}
+  /* ===== Quality Overview Cards ===== */
+  .overview-row{padding:16px 24px;display:flex;gap:12px;flex-wrap:nowrap;overflow-x:auto;}
+  .ov-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;flex:1;min-width:140px;}
+  .ov-label{font-size:12px;color:var(--text-3);margin-bottom:6px;}
+  .ov-val{font-size:14px;font-weight:600;margin-bottom:2px;}
+  .ov-sub{font-size:11px;color:var(--text-3);}
+  .ov-risk{color:var(--warning);}
+  .ov-safe{color:var(--success);}
+  .ov-unknown{color:var(--text-3);}
 
-  /* Risk Card */
-  .rc{background:var(--bg-2);border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow-1);overflow:hidden;transition:all .3s;margin-bottom:12px;}
-  .rc:hover{box-shadow:var(--shadow-2);}
-  .rc.exp{border-color:var(--primary);}
-  /* 保持和原产品完全一致的列结构: 风险项 | 风险类型 | 风险信息 | 风险等级 | 是否采纳 | 覆盖状态 | 操作 */
-  .rc-h{padding:16px 20px;display:grid;grid-template-columns:190px 90px 1fr 100px 80px 90px 80px;align-items:center;gap:12px;cursor:pointer;transition:background .2s;}
-  .rc-h:hover{background:var(--bg-1);}
-  .rc-nm{color:var(--primary);font-weight:600;font-size:14px;}
-  .rc-tp{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;background:var(--primary-light);color:var(--primary);white-space:nowrap;}
-  /* 风险信息列 - 保持原结构，文案换为业务+技术 CoT 摘要 */
-  .rc-inf{font-size:12px;color:var(--text-2);line-height:1.6;}
-  .rc-inf strong{color:var(--text-1);}
-  .rc-rk{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;position:relative;cursor:pointer;}
-  .rk-tip{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1D2129;color:#fff;border-radius:8px;padding:14px 16px;font-size:11px;font-weight:400;width:260px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);line-height:1.7;}
-  .rk-tip::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom:6px solid #1D2129;}
-  .rc-rk:hover .rk-tip{display:block;}
-  .rk-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.12);}
-  .rk-row:last-child{border-bottom:none;}.rk-row-l{color:rgba(255,255,255,.6);}.rk-row-r{font-weight:600;}
-  .rk-total{display:flex;justify-content:space-between;padding:6px 0 0;margin-top:4px;border-top:1px solid rgba(255,255,255,.25);font-weight:700;font-size:13px;}
-  .tw{width:36px;height:20px;background:#C9CDD4;border-radius:10px;position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
-  .tw.on{background:var(--primary);}.tw .dt{width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:all .3s;box-shadow:0 1px 3px rgba(0,0,0,.2);}.tw.on .dt{left:18px;}
-  .cv{font-size:11px;padding:3px 8px;border-radius:4px;}.cv-n{background:var(--danger-bg);color:var(--danger);}
-  .rc-ex{display:flex;align-items:center;gap:4px;color:var(--primary);font-size:12px;cursor:pointer;white-space:nowrap;justify-self:end;}
-  .rc-ex svg{transition:transform .3s;}.rc.exp .rc-ex svg{transform:rotate(180deg);}
-  .rc-b{display:none;border-top:1px solid var(--border);}.rc.exp .rc-b{display:block;}
+  /* ===== Risk Table Section ===== */
+  .risk-section{padding:16px 24px 24px;}
+  .rs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .rs-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;}
+  .rs-filters{display:flex;gap:6px;}
+  .rs-fb{padding:4px 12px;border-radius:4px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--bg-2);color:var(--text-2);transition:all .2s;}
+  .rs-fb:hover{border-color:var(--primary);color:var(--primary);}
+  .rs-fb.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary);}
 
-  /* Chain */
-  .chain-area{padding:24px;background:var(--bg-1);}
-  .chain-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-  .chain-title{font-size:13px;font-weight:600;color:var(--text-1);display:flex;align-items:center;gap:8px;}
-  .chain-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;}
-  .ct-direct{background:var(--danger-bg);color:var(--danger);}.ct-indirect{background:var(--warning-bg);color:var(--warning);}.ct-none{background:var(--success-bg);color:var(--success);}
-  .chain-sw{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-3);}
-  .mini-t{width:28px;height:16px;background:var(--primary);border-radius:8px;position:relative;cursor:pointer;}
-  .mini-t .md{width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;left:14px;transition:all .3s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
-  .chain-canvas{background:var(--bg-2);border-radius:var(--radius);border:1px solid var(--border);padding:32px;overflow-x:auto;}
+  /* ===== Risk Table ===== */
+  .risk-table{background:var(--bg-2);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+  .rt-head{display:grid;grid-template-columns:180px 110px 1fr 100px 90px 80px 90px;padding:10px 16px;background:var(--bg-1);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-3);font-weight:500;align-items:center;gap:8px;}
+  .rt-head span:nth-child(2){display:flex;align-items:center;gap:2px;cursor:pointer;}
+  .rt-head span:nth-child(2)::after{content:'▼';font-size:8px;}
+
+  /* ===== Risk Row ===== */
+  .rt-row{display:grid;grid-template-columns:180px 110px 1fr 100px 90px 80px 90px;padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px;align-items:center;gap:8px;transition:background .15s;cursor:pointer;}
+  .rt-row:last-child{border-bottom:none;}
+  .rt-row:hover{background:#F7F8FF;}
+  .rt-row.expanded{background:#F0F4FF;border-bottom-color:var(--primary-light);}
+
+  .rt-name{color:var(--primary);font-weight:500;font-size:13px;}
+  .rt-name:hover{text-decoration:underline;}
+
+  /* Risk Type Tags */
+  .rt-type{display:flex;flex-direction:column;gap:3px;}
+  .type-tag{font-size:11px;padding:2px 6px;border-radius:3px;font-weight:500;display:inline-block;white-space:nowrap;}
+  .tag-core{background:var(--primary-light);color:var(--primary);}
+  .tag-db{background:var(--warning-bg);color:var(--warning);}
+  .tag-svc{background:var(--bg-3);color:var(--text-2);}
+
+  .rt-info{font-size:12px;color:var(--text-2);line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;}
+  .rt-info strong{color:var(--text-1);font-weight:600;}
+  .rt-info .code{font-family:'SF Mono','Menlo',monospace;background:var(--bg-3);padding:0 4px;border-radius:2px;font-size:11px;color:#531DAB;}
+
+  .rt-level{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;position:relative;}
+  .rt-level .rk-tip{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1D2129;color:#fff;border-radius:8px;padding:12px 14px;font-size:11px;font-weight:400;width:240px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);line-height:1.7;}
+  .rt-level .rk-tip::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom:6px solid #1D2129;}
+  .rt-level:hover .rk-tip{display:block;}
+  .rk-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.1);}
+  .rk-row:last-child{border-bottom:none;}
+  .rk-row-l{color:rgba(255,255,255,.55);}.rk-row-r{font-weight:600;}
+  .rk-total{display:flex;justify-content:space-between;padding:5px 0 0;margin-top:3px;border-top:1px solid rgba(255,255,255,.2);font-weight:700;font-size:12px;}
+
+  .lv-h{color:var(--danger);}.lv-m{color:var(--warning);}.lv-l{color:var(--success);}
+
+  /* Toggle Switch */
+  .tw{width:34px;height:18px;background:#C9CDD4;border-radius:9px;position:relative;cursor:pointer;transition:all .25s;flex-shrink:0;}
+  .tw.on{background:var(--primary);}.tw .dt{width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:all .25s;box-shadow:0 1px 2px rgba(0,0,0,.15);}.tw.on .dt{left:18px;}
+
+  .rt-adopt{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);}
+
+  .cv{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:500;}
+  .cv-n{background:var(--danger-bg);color:var(--danger);}
+  .cv-y{background:var(--success-bg);color:var(--success);}
+
+  .rt-action{color:var(--primary);font-size:12px;display:flex;align-items:center;gap:3px;cursor:pointer;white-space:nowrap;}
+  .rt-action:hover{text-decoration:underline;}
+  .rt-action svg{transition:transform .2s;}
+  .rt-row.expanded .rt-action svg{transform:rotate(180deg);}
+
+  /* ===== Expand Detail Panel ===== */
+  .detail-panel{display:none;border-bottom:1px solid var(--border);background:var(--bg-1);}
+  .detail-panel.show{display:block;}
+
+  /* Chain Area */
+  .chain-area{padding:20px 24px;}
+  .chain-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .chain-title{font-size:13px;font-weight:600;color:var(--text-1);display:flex;align-items:center;gap:6px;}
+  .chain-tag{font-size:10px;padding:2px 8px;border-radius:4px;margin-left:6px;font-weight:500;}
+  .ct-direct{background:var(--danger-bg);color:var(--danger);}
+  .ct-indirect{background:var(--warning-bg);color:var(--warning);}
+  .ct-none{background:var(--success-bg);color:var(--success);}
+  .chain-canvas{background:var(--bg-2);border-radius:var(--radius);padding:24px;border:1px solid var(--border);overflow-x:auto;}
   .chain-flow{display:flex;align-items:center;gap:0;min-width:max-content;}
-
-  .nd{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;}
-  .nd-box{padding:12px 18px;border-radius:8px;font-size:12px;font-weight:600;border:2px solid;text-align:center;min-width:140px;transition:all .25s;cursor:default;}
-  .nd-box:hover{transform:scale(1.05);box-shadow:var(--shadow-2);}
-  .nd-sub{font-size:10px;font-weight:400;opacity:.7;margin-top:3px;}
-  .nd-lbl{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--bg-3);color:var(--text-3);white-space:nowrap;}
-  .nd-code{border-color:#3370FF;background:linear-gradient(135deg,#E8F0FF,#D6E4FF);color:#245BDB;cursor:pointer !important;position:relative;}
-  .nd-code:hover{transform:scale(1.08) !important;box-shadow:0 4px 16px rgba(51,112,255,.25) !important;}
-  .nd-code::after{content:'🔍 点击查看代码';position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--primary);opacity:0;transition:opacity .2s;white-space:nowrap;font-weight:400;pointer-events:none;}
+  .nd{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .nd-box{padding:10px 16px;border-radius:var(--radius);border:2px solid;text-align:center;min-width:140px;font-size:12px;position:relative;}
+  .nd-box div:first-child{font-weight:600;}
+  .nd-sub{font-size:10px;color:var(--text-3);margin-top:2px;}
+  .nd-lbl{font-size:10px;color:var(--text-3);}
+  .nd-code{border-color:var(--purple);background:var(--purple-bg);cursor:pointer;transition:all .2s;}
+  .nd-code:hover{box-shadow:0 2px 8px rgba(114,46,209,.2);transform:translateY(-1px);}
+  .nd-code::after{content:'🔍 点击查看代码';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--purple);opacity:0;transition:opacity .2s;white-space:nowrap;}
   .nd-code:hover::after{opacity:1;}
-  .nd-svc{border-color:#86909C;background:var(--bg-2);color:var(--text-2);}
-  .nd-func{border-color:var(--purple);background:linear-gradient(135deg,#F5EDFF,#EBE0FF);color:#531DAB;}
+  .nd-svc{border-color:var(--primary);background:var(--primary-light);}
+  .nd-func{border-color:var(--warning);background:var(--warning-bg);}
 
   /* DB Cylinder */
-  .nd-db-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;}
-  .db-cylinder{position:relative;width:160px;cursor:default;transition:all .25s;}
-  .db-cylinder:hover{transform:scale(1.06);filter:drop-shadow(0 4px 12px rgba(0,0,0,.12));}
-  .db-cyl-svg{width:100%;height:auto;display:block;}
-  .db-cyl-content{position:absolute;top:28px;left:0;right:0;text-align:center;pointer-events:none;}
-  .db-cyl-name{font-size:11px;font-weight:700;line-height:1.3;}
-  .db-cyl-desc{font-size:9px;opacity:.7;margin-top:2px;}
-  .db-cyl-ops{display:flex;gap:3px;justify-content:center;margin-top:5px;}
-  .op-t{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;font-family:'SF Mono','Menlo',monospace;}
-  .op-s{background:rgba(51,112,255,.15);color:#245BDB;}.op-i{background:rgba(0,180,42,.15);color:#009A29;}
-  .db-level{position:absolute;top:4px;right:8px;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;}
+  .nd-db-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .db-cylinder{position:relative;width:160px;height:100px;}
+  .db-cyl-svg{width:100%;height:100%;}
+  .db-cyl-content{position:absolute;top:30px;left:0;right:0;text-align:center;font-size:11px;}
+  .db-cyl-name{font-weight:700;font-size:12px;}
+  .db-cyl-desc{font-size:10px;margin-top:1px;}
+  .db-cyl-ops{margin-top:4px;display:flex;gap:4px;justify-content:center;}
+  .op-t{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;}
+  .op-i{background:#FFECE8;color:#F53F3F;}.op-s{background:#E8FFEA;color:#00B42A;}
+  .db-level{position:absolute;top:-6px;right:10px;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;z-index:2;}
   .lv-p0{background:#F53F3F;color:#fff;}.lv-p1{background:#FF7D00;color:#fff;}
 
-  .ar{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding:0 2px;justify-content:center;}
-  .ar-line{width:52px;height:2px;position:relative;}
-  .ar-line::after{content:'';position:absolute;right:-1px;top:-5px;border:6px solid transparent;}
-  .ar-solid{background:var(--text-3);}.ar-solid::after{border-left:7px solid var(--text-3);}
-  .ar-red{background:var(--danger);}.ar-red::after{border-left:7px solid var(--danger);}
-  .ar-orange{background:var(--warning);}.ar-orange::after{border-left:7px solid var(--warning);}
-  .ar-dashed{background:repeating-linear-gradient(90deg,var(--success) 0 6px,transparent 6px 10px);}.ar-dashed::after{border-left:7px solid var(--success);}
-  .ar-lbl{font-size:9px;color:var(--text-3);margin-top:5px;white-space:nowrap;}
-  .ar-lbl-r{color:var(--danger);font-weight:600;}.ar-lbl-o{color:var(--warning);font-weight:600;}
+  /* Arrow */
+  .ar{display:flex;flex-direction:column;align-items:center;width:70px;position:relative;}
+  .ar-line{width:100%;height:2px;position:relative;}
+  .ar-line::after{content:'';position:absolute;right:-1px;top:-4px;border:5px solid transparent;}
+  .ar-red{background:var(--danger);}.ar-red::after{border-left-color:var(--danger);}
+  .ar-orange{background:var(--warning);}.ar-orange::after{border-left-color:var(--warning);}
+  .ar-solid{background:var(--text-3);}.ar-solid::after{border-left-color:var(--text-3);}
+  .ar-dashed{background:repeating-linear-gradient(90deg,var(--success) 0,var(--success) 6px,transparent 6px,transparent 10px);height:2px;}.ar-dashed::after{border-left-color:var(--success);}
+  .ar-lbl{font-size:9px;margin-top:3px;white-space:nowrap;}
+  .ar-lbl-r{color:var(--danger);}.ar-lbl-o{color:var(--warning);}
 
-  /* === Code Diff Popover === */
-  .diff-popover-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;background:rgba(0,0,0,.18);}
-  .diff-popover-overlay.show{display:block;}
-  .diff-popover{position:absolute;width:700px;max-height:480px;background:var(--bg-2);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.08);border:1px solid var(--border);overflow:hidden;z-index:1000;animation:popIn .2s ease-out;}
-  @keyframes popIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
-  .diff-popover-arrow{position:absolute;top:-7px;left:60px;width:14px;height:14px;background:var(--bg-2);border:1px solid var(--border);border-bottom:none;border-right:none;transform:rotate(45deg);z-index:1001;}
-  .diff-pop-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg-3);border-bottom:1px solid var(--border);}
-  .diff-pop-title{font-size:12px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:8px;}
-  .diff-pop-file{font-family:'SF Mono','Menlo',monospace;font-size:11px;color:var(--text-3);background:var(--bg-1);padding:2px 8px;border-radius:4px;}
-  .diff-pop-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:var(--text-3);transition:all .15s;border:none;background:transparent;font-size:16px;}
-  .diff-pop-close:hover{background:var(--bg-1);color:var(--text-1);}
-  .diff-pop-body{overflow-y:auto;max-height:420px;}
-  .diff-table{width:100%;border-collapse:collapse;font-family:'SF Mono','Menlo','Consolas',monospace;font-size:12px;line-height:1.65;}
-  .diff-table td{padding:0 12px;white-space:pre;vertical-align:top;}
-  .diff-ln{width:1px;color:var(--text-3);text-align:right;padding-right:10px;padding-left:10px;user-select:none;border-right:1px solid var(--border);background:var(--bg-1);font-size:11px;opacity:.7;}
-  .diff-content{padding-left:14px !important;}
-  .diff-add{background:#DAFBE1;}
-  .diff-add .diff-ln{background:#CCFFD8;color:#1A7F37;}
-  .diff-add .diff-content{color:#1A7F37;}
-  .diff-del{background:#FFEBE9;}
-  .diff-del .diff-ln{background:#FFD7D5;color:#CF222E;}
-  .diff-del .diff-content{color:#CF222E;}
-  .diff-ctx{background:var(--bg-2);}
-  .diff-hunk{background:#DDF4FF;color:#0969DA;font-weight:600;}
-  .diff-hunk td{padding:6px 12px;}
-  .diff-highlight{background:#ACEEBB;border-radius:2px;padding:0 1px;}
+  /* CoT Area */
+  .cot-area{padding:0 24px 20px;}
+  .cot-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .cot-icon{font-size:14px;}.cot-ttl{font-size:13px;font-weight:600;}
+  .cot-badge{font-size:9px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;}
+  .cot-body{font-size:13px;color:var(--text-2);line-height:1.8;padding:14px 16px;background:var(--bg-2);border-radius:var(--radius);border:1px solid var(--border);}
+  .cot-body .code{font-family:'SF Mono','Menlo',monospace;background:var(--bg-3);padding:1px 5px;border-radius:3px;font-size:12px;color:#531DAB;}
+  .cot-body .hl{color:var(--danger);font-weight:600;}
 
-  /* CoT */
-  .cot-area{padding:20px 24px;border-top:1px solid var(--border);}
-  .cot-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
-  .cot-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3370FF,#722ED1);color:#fff;font-size:12px;}
-  .cot-ttl{font-size:13px;font-weight:600;color:var(--text-1);}
-  .cot-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:linear-gradient(135deg,#3370FF,#722ED1);color:#fff;font-weight:500;}
-  .cot-body{font-size:13px;color:var(--text-2);line-height:2;padding:14px 18px;border-radius:var(--radius);background:var(--bg-1);border:1px solid var(--border);}
-  .hl{background:#FFF3CD;padding:1px 5px;border-radius:3px;color:#856404;font-weight:500;}
-  .code{font-family:'SF Mono','Menlo',monospace;background:var(--bg-3);padding:1px 5px;border-radius:3px;font-size:12px;color:#531DAB;}
-
-  /* Score */
-  .score-bar{padding:14px 20px;background:var(--bg-1);border-top:1px solid var(--border);display:flex;align-items:center;gap:16px;}
-  .score-lbl{font-size:12px;color:var(--text-3);flex-shrink:0;}
-  .score-track{flex:1;height:8px;background:var(--bg-3);border-radius:4px;overflow:hidden;}
-  .score-fill{height:100%;border-radius:4px;transition:width .8s ease;}
-  .sf-high{background:linear-gradient(90deg,#FF7D00,#F53F3F);}
-  .sf-med{background:linear-gradient(90deg,#FFD700,#FF7D00);}
-  .sf-low{background:linear-gradient(90deg,#00B42A,#52C41A);}
-  .score-wrap{position:relative;flex-shrink:0;}
-  .score-val{font-size:16px;font-weight:700;cursor:pointer;}
-  .score-tip{display:none;position:absolute;bottom:calc(100% + 10px);right:0;background:#1D2129;color:#fff;border-radius:8px;padding:14px 16px;font-size:11px;font-weight:400;width:260px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);line-height:1.7;}
+  /* Score Bar */
+  .score-bar{padding:0 24px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .score-lbl{font-size:12px;color:var(--text-3);white-space:nowrap;}
+  .score-track{flex:1;height:6px;background:var(--bg-3);border-radius:3px;overflow:hidden;min-width:100px;}
+  .score-fill{height:100%;border-radius:3px;transition:width .8s ease;}
+  .sf-high{background:linear-gradient(90deg,#FF6B6B,#F53F3F);}.sf-med{background:linear-gradient(90deg,#FFB347,#FF7D00);}.sf-low{background:linear-gradient(90deg,#95DE64,#00B42A);}
+  .score-wrap{position:relative;cursor:pointer;}
+  .score-val{font-size:14px;font-weight:700;}
+  .score-tip{display:none;position:absolute;bottom:calc(100% + 10px);right:0;background:#1D2129;color:#fff;border-radius:8px;padding:12px 14px;font-size:11px;width:240px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.2);line-height:1.7;}
   .score-tip::after{content:'';position:absolute;bottom:-6px;right:16px;border:6px solid transparent;border-top:6px solid #1D2129;}
   .score-wrap:hover .score-tip{display:block;}
-  .score-factors{display:flex;gap:12px;flex-shrink:0;}
-  .sf{font-size:10px;color:var(--text-3);display:flex;flex-direction:column;align-items:center;gap:2px;}
-  .sfv{font-size:11px;font-weight:700;}
+  .score-factors{display:flex;gap:10px;font-size:11px;color:var(--text-3);}
+  .sf{display:flex;align-items:center;gap:3px;}.sfv{font-weight:700;}
 
-  @media(max-width:1200px){.stats-row{grid-template-columns:1fr;}.rc-h{grid-template-columns:1fr;gap:8px;}}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-  .anim{animation:fadeUp .4s ease-out forwards;}.d1{animation-delay:.1s;opacity:0;}.d2{animation-delay:.2s;opacity:0;}.d3{animation-delay:.3s;opacity:0;}
+  /* Code Diff Popover */
+  .diff-popover-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .diff-popover-overlay.show{opacity:1;pointer-events:auto;}
+  .diff-popover{background:var(--bg-2);border-radius:var(--radius-lg);box-shadow:0 12px 40px rgba(0,0,0,.15);width:700px;max-width:90vw;max-height:70vh;overflow:hidden;transform:scale(.95);transition:transform .2s;}
+  .diff-popover-overlay.show .diff-popover{transform:scale(1);}
+  .diff-pop-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .diff-pop-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;}
+  .diff-pop-file{font-size:11px;color:var(--text-3);font-weight:400;font-family:monospace;}
+  .diff-pop-close{border:none;background:none;font-size:16px;cursor:pointer;color:var(--text-3);padding:4px 8px;border-radius:4px;}
+  .diff-pop-close:hover{background:var(--bg-3);color:var(--text-1);}
+  .diff-code{padding:0;margin:0;overflow:auto;max-height:55vh;font-family:'SF Mono','Menlo','Consolas',monospace;font-size:12px;line-height:1.7;}
+  .diff-line{display:flex;padding:0 16px;min-height:22px;}
+  .diff-ln{width:40px;text-align:right;color:#86909C;user-select:none;flex-shrink:0;padding-right:12px;}
+  .diff-ct{flex:1;white-space:pre;padding-left:4px;}
+  .diff-add{background:#E8FFEA;}.diff-add .diff-ct{color:#00652E;}
+  .diff-del{background:#FFECE8;}.diff-del .diff-ct{color:#A8071A;}
+  .diff-ctx{background:var(--bg-2);}
+
+  /* Animation */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
 
+<!-- ===== Top Nav ===== -->
 <div class="top-nav">
   <div class="nav-left">
-    <div class="nav-back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-    <div class="nav-tabs">
-      <div class="nav-tab active">faceu.commerce.ad_api <span class="sb sb-r">未知悉</span></div>
-      <div class="nav-tab">ug.incentive.task_engine <span class="sb sb-g">已知悉</span></div>
-    </div>
-  </div>
-  <div class="nav-right">
-    <span style="font-size:12px;color:var(--text-3);">⚠️ 请知悉并确认识别风险是否采纳</span>
-    <button class="nav-btn">🔔 风险待知悉</button>
+    <div class="nav-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="#fff" stroke-width="1.5"/><path d="M7 4V7.5L9 9" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <span class="nav-title">风险明细页</span>
+    <span class="nav-badge">RD 自测</span>
   </div>
 </div>
 
-<div class="header-info">
-  <div class="header-meta">
-    <span>关联需求 <a href="#">【剪映】剪同款增加看广免广弹窗</a></span>
-    <span>Commit <a href="#">ed6ec3307e...</a></span>
-    <span>Diff <a href="#">点击查看</a></span>
-    <span>流水线 <a href="#">1139745723394</a></span>
-    <span>更新时间 2026-04-13 18:45:30</span>
+<!-- ===== Service Tab Bar ===== -->
+<div class="tab-bar">
+  <div class="tab-item active">faceu.commerce.ad_api <span class="tab-badge tb-r">未知悉</span></div>
+  <div class="tab-item">ug.incentive.task_engine <span class="tab-badge tb-g">已知悉</span></div>
+  <div style="flex:1"></div>
+  <div style="display:flex;align-items:center;gap:6px;padding:8px 0;">
+    <span style="font-size:11px;color:var(--danger);display:flex;align-items:center;gap:3px;">🔴 风险待知悉</span>
+    <span style="font-size:11px;color:var(--text-3);">请知悉并确认识别风险是否采纳</span>
   </div>
 </div>
 
-<div class="stats-row">
-  <div class="stat-card anim d1">
-    <div class="sc-h">研发质量</div>
-    <div class="qg">
-      <div class="qi"><div class="qr"><svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="21" fill="none" stroke="#F2F3F5" stroke-width="5"/></svg><span class="qv cd">0%</span></div><div class="ql">工程质量</div><div class="qs cd">中风险</div><div class="qs">0/4 · 0%</div></div>
-      <div class="qi"><div class="qr"><svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="21" fill="none" stroke="#F2F3F5" stroke-width="5"/><circle cx="26" cy="26" r="21" fill="none" stroke="#00B42A" stroke-width="5" stroke-dasharray="132 132" stroke-linecap="round" transform="rotate(-90 26 26)"/></svg><span class="qv cs">100%</span></div><div class="ql">客诉舆情</div><div class="qs cs">无风险</div><div class="qs">0/0 · 100%</div></div>
-      <div class="qi"><div class="qr"><svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="21" fill="none" stroke="#F2F3F5" stroke-width="5"/><circle cx="26" cy="26" r="21" fill="none" stroke="#00B42A" stroke-width="5" stroke-dasharray="132 132" stroke-linecap="round" transform="rotate(-90 26 26)"/></svg><span class="qv cs">100%</span></div><div class="ql">配置风险</div><div class="qs cs">无风险</div><div class="qs">0/0 · 100%</div></div>
-      <div class="qi"><div class="qr"><svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="21" fill="none" stroke="#F2F3F5" stroke-width="5"/></svg><span class="qv" style="color:var(--text-3);">—</span></div><div class="ql">功能点分析</div><div class="qs">未知 ⊙</div><div class="qs">0/0 · 100%</div></div>
-    </div>
+<!-- ===== Meta Bar ===== -->
+<div class="meta-bar">
+  <span>关联需求 <a href="#">【剪映】剪同款增加看广免广弹窗</a></span>
+  <span>Commit <a href="#">ed6ec3307e...</a></span>
+  <span>Diff <a href="#">点击查看</a></span>
+  <span>流水线 <a href="#">1139745723394</a></span>
+  <span>更新时间 2026-04-13 18:45:30</span>
+</div>
+
+<!-- ===== Quality Overview ===== -->
+<div class="overview-row">
+  <div class="ov-card">
+    <div class="ov-label">工程质量</div>
+    <div class="ov-val ov-risk">中风险</div>
+    <div class="ov-sub">数量: 0/4 &nbsp; 覆盖率: 0%</div>
   </div>
-  <div class="stat-card anim d2">
-    <div class="sc-h">变更风险<span style="font-size:10px;color:var(--danger);background:var(--danger-bg);padding:2px 8px;border-radius:4px;">⚠ 未完成风险验证</span></div>
-    <div class="ro">
-      <div class="donut"><svg width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="35" fill="none" stroke="#F2F3F5" stroke-width="9"/><circle cx="45" cy="45" r="35" fill="none" stroke="#F53F3F" stroke-width="9" stroke-dasharray="220 220" stroke-linecap="round" transform="rotate(-90 45 45)"/></svg><div class="donut-c"><div class="donut-n">4</div><div class="donut-l">总数</div></div></div>
-      <div class="leg"><div class="li"><span class="ld" style="background:#00B42A"></span>已验证 0</div><div class="li"><span class="ld" style="background:#F53F3F"></span>待验证 4</div></div>
-      <div style="margin-left:auto;text-align:center;"><svg width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="35" r="28" fill="none" stroke="#F2F3F5" stroke-width="7"/><circle cx="35" cy="35" r="28" fill="none" stroke="#FF7D00" stroke-width="7" stroke-dasharray="176 176" stroke-linecap="round" transform="rotate(-90 35 35)"/></svg><div style="font-size:10px;color:var(--text-3);margin-top:4px;">风险分布</div></div>
-      <div class="leg" style="font-size:11px;"><div class="li"><span class="ld" style="background:#FF7D00"></span>工程质量</div><div class="li"><span class="ld" style="background:#3370FF"></span>配置风险</div></div>
-    </div>
+  <div class="ov-card">
+    <div class="ov-label">客诉舆情</div>
+    <div class="ov-val ov-safe">无风险</div>
+    <div class="ov-sub">数量: 0/0 &nbsp; 覆盖率: 100%</div>
   </div>
-  <div class="stat-card anim d3">
-    <div class="sc-h">操作建议</div>
-    <div class="al">
-      <div class="ai"><div class="ai-ic" style="background:var(--danger-bg);color:var(--danger);">🔴</div><div><div style="font-weight:500;color:var(--text-1);">4个(中/高)风险待知悉</div><div style="font-size:11px;color:var(--text-3);">faceu.commerce.ad_api</div></div><button class="ai-btn">处理</button></div>
-      <div class="ai"><div class="ai-ic" style="background:var(--warning-bg);color:var(--warning);">🟠</div><div><div style="font-weight:500;color:var(--text-1);">3条链路涉及核心DB表</div><div style="font-size:11px;color:var(--text-3);">含 1个P0直接写入 + 2个P1间接读取</div></div><button class="ai-btn">定位</button></div>
-      <div class="ai"><div class="ai-ic" style="background:var(--purple-bg);color:var(--purple);">🟣</div><div><div style="font-weight:500;color:var(--text-1);">建议灰度 + DB写入压测</div><div style="font-size:11px;color:var(--text-3);">涉及P0表INSERT高频写入</div></div><button class="ai-btn">了解</button></div>
-    </div>
+  <div class="ov-card">
+    <div class="ov-label">配置风险</div>
+    <div class="ov-val ov-safe">无风险</div>
+    <div class="ov-sub">数量: 0/0 &nbsp; 覆盖率: 100%</div>
+  </div>
+  <div class="ov-card">
+    <div class="ov-label">功能点分析</div>
+    <div class="ov-val ov-unknown">未知 ⊙</div>
+    <div class="ov-sub">数量: 0/0 &nbsp; 覆盖率: 100%</div>
   </div>
 </div>
 
-<!-- ========== RISK LIST ========== -->
-<div class="risk-sec">
-  <div class="sh">
-    <div class="st"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L16 15H2L9 2Z" stroke="#FF7D00" stroke-width="1.5" fill="none"/><path d="M9 7V10M9 12V12.5" stroke="#FF7D00" stroke-width="1.5" stroke-linecap="round"/></svg>核心链路风险</div>
-    <div class="sc"><div class="fb on">全部 (4)</div><div class="fb">含DB影响 (3)</div><div class="fb">仅服务影响 (1)</div></div>
+<!-- ===== Risk Table Section ===== -->
+<div class="risk-section">
+  <div class="rs-header">
+    <div class="rs-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 12H1L7 1Z" stroke="#FF7D00" stroke-width="1.5" fill="none"/><path d="M7 5V8M7 9.5V10" stroke="#FF7D00" stroke-width="1.2" stroke-linecap="round"/></svg> 核心链路风险</div>
+    <div class="rs-filters">
+      <div class="rs-fb on" onclick="filterRows('all',this)">全部 (4)</div>
+      <div class="rs-fb" onclick="filterRows('db',this)">含DB影响 (3)</div>
+      <div class="rs-fb" onclick="filterRows('svc',this)">仅服务影响 (1)</div>
+    </div>
   </div>
 
-  <!-- ======== CARD 1 ======== -->
-  <div class="rc exp" id="c1">
-    <div class="rc-h" onclick="tog('c1')">
-      <span class="rc-nm">剪映*获取相册页广告</span>
-      <span><span class="rc-tp">核心链路</span></span>
-      <span class="rc-inf">本次新增免广奖励场景(SceneRewardFreeAd)，<strong>直接INSERT写入</strong>核心P0表reward_free_ad_table，该表承载用户免广奖励的发放与核销。日均50w+高频写入，异常可致用户看广告后奖励丢失或重复发放</span>
-      <span class="rc-rk cw">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div><div class="rk-row"><span class="rk-row-l">操作类型（INSERT）</span><span class="rk-row-r">22.5</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P0）</span><span class="rk-row-r">25</span></div><div class="rk-row"><span class="rk-row-l">数据量级（高频）</span><span class="rk-row-r">16</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FF6B6B;">93.5</span></div></div></span>
-      <span><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div></span>
-      <span class="cv cv-n">未覆盖</span>
-      <span class="rc-ex">展开详情 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+  <div class="risk-table" id="riskTable">
+    <!-- Table Header -->
+    <div class="rt-head">
+      <span>风险项</span>
+      <span>风险类型</span>
+      <span>风险信息</span>
+      <span>风险等级</span>
+      <span>是否采纳</span>
+      <span>覆盖状态</span>
+      <span>操作</span>
     </div>
-    <div class="rc-b">
+
+    <!-- ======== ROW 1 ======== -->
+    <div class="rt-row" data-type="db" id="r1" onclick="togRow('r1')">
+      <span class="rt-name">剪映*获取相册页广告</span>
+      <span class="rt-type"><span class="type-tag tag-core">核心链路</span><span class="type-tag tag-db">DB影响</span></span>
+      <span class="rt-info"><strong>[稳定性]</strong> <span class="code">GetFrisbeeResult</span> → <span class="code">reward_free_ad_table</span> 调用链新增 <span class="code">SceneRewardFreeAd</span> 分支后，每次请求稳定触发 INSERT 写入P0表，变更未包含写入限流与批量合并机制，明显有DB写热点风险；修正方向：补齐批量合并写入或增加令牌桶限流兜底。<strong>[功能]</strong> 新 case 未校验奖励去重逻辑，广告回调重复触发时可能导致用户重复领取免广奖励。</span>
+      <span class="rt-level lv-m">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div><div class="rk-row"><span class="rk-row-l">操作类型（INSERT）</span><span class="rk-row-r">22.5</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P0）</span><span class="rk-row-r">25</span></div><div class="rk-row"><span class="rk-row-l">数据量级（高频）</span><span class="rk-row-r">16</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FF6B6B;">93.5</span></div></div></span>
+      <span class="rt-adopt"><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div>采纳</span>
+      <span><span class="cv cv-n">未覆盖</span></span>
+      <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    </div>
+    <div class="detail-panel" id="d1">
       <div class="chain-area">
         <div class="chain-head">
-          <div class="chain-title"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8H14M10 4L14 8L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-direct">● 直接影响DB</span></div>
-          <div class="chain-sw">精简链路 <div class="mini-t"><div class="md"></div></div></div>
+          <div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-direct">● 直接影响DB</span></div>
         </div>
         <div class="chain-canvas">
           <div class="chain-flow">
-            <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event, 'diff-c1')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">新增 case 分支 (L303-305)</div></div><span class="nd-lbl">📝 代码变更</span></div>
+            <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c1')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">新增 case 分支 (L303-305)</div></div><span class="nd-lbl">📝 代码变更</span></div>
             <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">触发调用</span></div>
             <div class="nd"><div class="nd-box nd-svc"><div>GetGroMoreAd</div><div class="nd-sub">faceu.commerce.ad_api</div></div><span class="nd-lbl">🔌 链路入口</span></div>
             <div class="ar"><div class="ar-line ar-red"></div><span class="ar-lbl ar-lbl-r">路由分发</span></div>
@@ -299,37 +318,35 @@
           </div>
         </div>
       </div>
-
       <div class="cot-area">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">AI 变更影响解释</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-body">本次变更在 <span class="code">GetFrisbeeResult</span> 函数的 <span class="code">switch scene</span> 中新增了 <span class="hl">SceneRewardFreeAd</span> 分支（第303-305行），为「剪同款增加看广免广弹窗」需求新增了免广奖励场景。该变更通过 <span class="code">GetGroMoreAd</span> 入口 → <span class="code">GetFrisbeeResult</span> 函数，<strong>直接 INSERT 写入</strong>核心表 <span class="code">reward_free_ad_table</span>（P0），该表承载免广奖励的<span class="hl">发放与核销逻辑</span>，是「剪映*获取相册页广告」链路的核心数据依赖。新增 INSERT 操作预估影响<strong>日均 50w+ 条记录</strong>，属于高频写入场景；若写入异常，可能导致用户看广告后无法免广、奖励重复发放或广告收入损失。</div>
+        <div class="cot-body"><strong>[稳定性]</strong> <span class="code">GetFrisbeeResult</span> → <span class="code">reward_free_ad_table</span> 调用链新增 <span class="code">SceneRewardFreeAd</span> 分支后，每次请求稳定触发 INSERT 写入P0表，变更未包含写入限流与批量合并机制，明显有DB写热点风险；修正方向：补齐批量合并写入（按 <span class="code">userId</span> 聚合后单次 bulk INSERT），或增加令牌桶限流兜底。<br/><br/><strong>[功能]</strong> 新 case 仅映射 <span class="code">eventName</span> / <span class="code">taskKey</span>，未校验奖励去重逻辑（同一 <span class="code">userId + sceneId</span> 重复写入无唯一约束），广告回调重复触发时可能导致用户重复领取免广奖励；修正方向：INSERT 前增加 <span class="code">userId+sceneId+traceId</span> 幂等校验，或在表级别增加唯一索引兜底。</div>
       </div>
-
       <div class="score-bar">
         <span class="score-lbl">综合风险</span>
         <div class="score-track"><div class="score-fill sf-high" style="width:93.5%;"></div></div>
-        <div class="score-wrap"><span class="score-val cd">93.5</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div><div class="rk-row"><span class="rk-row-l">操作类型（INSERT）</span><span class="rk-row-r">22.5</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P0）</span><span class="rk-row-r">25</span></div><div class="rk-row"><span class="rk-row-l">数据量级（高频）</span><span class="rk-row-r">16</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FF6B6B;">93.5</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv cd">直接</span>影响</div><div class="sf"><span class="sfv cw">INSERT</span>操作</div><div class="sf"><span class="sfv cd">P0</span>库表</div><div class="sf"><span class="sfv cw">高频</span>量级</div></div>
+        <div class="score-wrap"><span class="score-val" style="color:var(--danger);">93.5</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div><div class="rk-row"><span class="rk-row-l">操作类型（INSERT）</span><span class="rk-row-r">22.5</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P0）</span><span class="rk-row-r">25</span></div><div class="rk-row"><span class="rk-row-l">数据量级（高频）</span><span class="rk-row-r">16</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FF6B6B;">93.5</span></div></div></div>
+        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--danger);">直接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--warning);">INSERT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--danger);">P0</span>库表</div><div class="sf"><span class="sfv" style="color:var(--warning);">高频</span>量级</div></div>
       </div>
     </div>
-  </div>
 
-  <!-- ======== CARD 2 ======== -->
-  <div class="rc" id="c2">
-    <div class="rc-h" onclick="tog('c2')">
-      <span class="rc-nm">剪映*获取相册页广告recall</span>
-      <span><span class="rc-tp">核心链路</span></span>
-      <span class="rc-inf">新增免广场景间接触发HandleRecall→LoadRewardConfig读取P1配置表frisbee_reward_config，<strong>若新场景配置缺失或缓存未预热</strong>，将走降级逻辑导致免广弹窗功能无法触发，影响广告召回率</span>
-      <span class="rc-rk cw">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">14</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">62.0</span></div></div></span>
-      <span><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div></span>
-      <span class="cv cv-n">未覆盖</span>
-      <span class="rc-ex">展开详情 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <!-- ======== ROW 2 ======== -->
+    <div class="rt-row" data-type="db" id="r2" onclick="togRow('r2')">
+      <span class="rt-name">剪映*获取相册页广告recall</span>
+      <span class="rt-type"><span class="type-tag tag-core">核心链路</span><span class="type-tag tag-db">DB影响</span></span>
+      <span class="rt-info"><strong>[功能]</strong> <span class="code">LoadRewardConfig</span> → <span class="code">frisbee_reward_config</span> 调用链，新增场景需要配置表中对应的奖励策略行，但代码变更未包含配置写入，上线后该场景命中降级逻辑，导致免广弹窗不弹出；修正方向：上线前补齐场景配置。<strong>[稳定性]</strong> 新场景缓存冷启，穿透到DB SELECT，高峰期可能造成DB读压力回归。</span>
+      <span class="rt-level lv-m">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">14</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">62.0</span></div></div></span>
+      <span class="rt-adopt"><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div>采纳</span>
+      <span><span class="cv cv-n">未覆盖</span></span>
+      <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     </div>
-    <div class="rc-b">
+    <div class="detail-panel" id="d2">
       <div class="chain-area">
-        <div class="chain-head"><div class="chain-title"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8H14M10 4L14 8L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-indirect">◐ 间接影响DB</span></div><div class="chain-sw">精简链路 <div class="mini-t"><div class="md"></div></div></div></div>
+        <div class="chain-head">
+          <div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-indirect">◐ 间接影响DB</span></div>
+        </div>
         <div class="chain-canvas"><div class="chain-flow">
-          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event, 'diff-c2')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">路由逻辑变更</div></div><span class="nd-lbl">📝 代码变更</span></div>
+          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c2')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">路由逻辑变更</div></div><span class="nd-lbl">📝 代码变更</span></div>
           <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">间接触发</span></div>
           <div class="nd"><div class="nd-box nd-svc"><div>HandleRecall</div><div class="nd-sub">ad_recall_service</div></div><span class="nd-lbl">🔌 下游接口</span></div>
           <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">配置加载</span></div>
@@ -340,32 +357,32 @@
       </div>
       <div class="cot-area">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">AI 变更影响解释</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-body">新增 <span class="code">SceneRewardFreeAd</span> 场景使得 recall 阶段<strong>间接</strong>触发了 <span class="code">HandleRecall</span> → <span class="code">LoadRewardConfig</span> → SELECT <span class="code">frisbee_reward_config</span> 的完整读链路。该表是飞盘奖励的配置表（P1），控制各场景的奖励策略下发。虽然仅为 SELECT 读操作，但若<span class="hl">新场景配置缺失或缓存未预热</span>，新场景将走降级逻辑（无广告配置），直接影响广告召回率，导致免广弹窗功能无法正常触发。</div>
+        <div class="cot-body"><strong>[功能]</strong> <span class="code">LoadRewardConfig</span> → <span class="code">frisbee_reward_config</span> 调用链，新增 <span class="code">SceneRewardFreeAd</span> 场景需要配置表中对应的奖励策略行，但代码变更未包含配置写入，上线后该场景将命中降级逻辑，导致用户看完广告后免广弹窗不弹出；修正方向：上线前在 <span class="code">frisbee_reward_config</span> 补齐场景配置，或在代码侧增加配置缺失时的明确报错告警。<br/><br/><strong>[稳定性]</strong> 新场景首次请求缓存冷启，<span class="code">LoadRewardConfig</span> 每次穿透到 DB SELECT，高峰期可能造成 DB 读压力回归；修正方向：恢复/补齐缓存预热机制（至少将 config 结果做本地/Redis 缓存，TTL+jitter），必要时按 <span class="code">sceneId</span> 分 key。</div>
       </div>
       <div class="score-bar">
         <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-med" style="width:62%;"></div></div>
-        <div class="score-wrap"><span class="score-val cw">62.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">14</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">62.0</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv cw">间接</span>影响</div><div class="sf"><span class="sfv cs">SELECT</span>操作</div><div class="sf"><span class="sfv cw">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">中频</span>量级</div></div>
+        <div class="score-wrap"><span class="score-val" style="color:var(--warning);">62.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">14</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">62.0</span></div></div></div>
+        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">SELECT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--warning);">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">中频</span>量级</div></div>
       </div>
     </div>
-  </div>
 
-  <!-- ======== CARD 3 ======== -->
-  <div class="rc" id="c3">
-    <div class="rc-h" onclick="tog('c3')">
-      <span class="rc-nm">醒图*获取广告配置</span>
-      <span><span class="rc-tp">核心链路</span></span>
-      <span class="rc-inf">新增免广场景间接增大RetouchpicsHandleGetAdConfig对P1共用表ad_placement_config的SELECT压力，<strong>缓存命中率下降可能拖慢醒图侧广告配置加载</strong>，影响醒图/剪映双端广告展示体验</span>
-      <span class="rc-rk cw">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">17.5</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">10</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">55.5</span></div></div></span>
-      <span><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div></span>
-      <span class="cv cv-n">未覆盖</span>
-      <span class="rc-ex">展开详情 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <!-- ======== ROW 3 ======== -->
+    <div class="rt-row" data-type="db" id="r3" onclick="togRow('r3')">
+      <span class="rt-name">醒图*获取广告配置</span>
+      <span class="rt-type"><span class="type-tag tag-core">核心链路</span><span class="type-tag tag-db">DB影响</span></span>
+      <span class="rt-info"><strong>[稳定性]</strong> <span class="code">HandleGetAdConfig</span> → <span class="code">ad_placement_config</span> 调用链，该表为醒图/剪映共用表，新场景增量查询叠加现有流量，变为每次请求稳定触发多次DB查询，缓存失效时可能引发慢查询影响双端广告加载；修正方向：恢复/补齐等价缓存层。<strong>[功能]</strong> 若广告位配置未覆盖新场景，醒图侧可能出现空广告位或兜底素材异常。</span>
+      <span class="rt-level lv-m">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">17.5</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">10</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">55.5</span></div></div></span>
+      <span class="rt-adopt"><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div>采纳</span>
+      <span><span class="cv cv-n">未覆盖</span></span>
+      <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     </div>
-    <div class="rc-b">
+    <div class="detail-panel" id="d3">
       <div class="chain-area">
-        <div class="chain-head"><div class="chain-title"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8H14M10 4L14 8L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-indirect">◐ 间接影响DB</span></div><div class="chain-sw">精简链路 <div class="mini-t"><div class="md"></div></div></div></div>
+        <div class="chain-head">
+          <div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-indirect">◐ 间接影响DB</span></div>
+        </div>
         <div class="chain-canvas"><div class="chain-flow">
-          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event, 'diff-c3')"><div>+ RewardFreeAd 路由</div><div class="nd-sub">影响广告配置读取</div></div><span class="nd-lbl">📝 代码变更</span></div>
+          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c3')"><div>+ RewardFreeAd 路由</div><div class="nd-sub">影响广告配置读取</div></div><span class="nd-lbl">📝 代码变更</span></div>
           <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">间接触发</span></div>
           <div class="nd"><div class="nd-box nd-svc"><div>HandleGetAdConfig</div><div class="nd-sub">ad_config_service</div></div><span class="nd-lbl">🔌 下游接口</span></div>
           <div class="ar"><div class="ar-line ar-solid"></div><span class="ar-lbl">SELECT 读取</span></div>
@@ -374,32 +391,32 @@
       </div>
       <div class="cot-area">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">AI 变更影响解释</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-body">新增免广奖励场景后，<span class="code">RetouchpicsHandleGetAdConfig</span> 接口的调用量预计增加，间接增大对 <span class="code">ad_placement_config</span> 表（P1）的 SELECT 查询压力。该表为醒图和剪映共用的广告位配置表，读取频率上升可能导致<span class="hl">缓存命中率下降</span>，进而拖慢广告配置加载速度，影响醒图侧的广告展示体验。</div>
+        <div class="cot-body"><strong>[稳定性]</strong> <span class="code">HandleGetAdConfig</span> → <span class="code">ad_placement_config</span> 调用链，该表为醒图/剪映共用表，新场景带来的增量查询叠加现有流量，变为每次请求稳定触发多次 DB 查询（广告位列表 + 场景映射），缓存失效时可能引发慢查询影响双端广告加载；修正方向：恢复/补齐等价缓存层（至少把 "placement IDs + scene mapping" 聚合结果做本地/Redis 缓存，TTL+jitter，必要时按 <span class="code">appId/placementId</span> 分 key）。<br/><br/><strong>[功能]</strong> 若广告位配置未覆盖新奖励场景的 <span class="code">placementId</span>，醒图侧可能出现空广告位或兜底素材展示异常；修正方向：上线前确认 <span class="code">ad_placement_config</span> 已包含新场景对应的广告位行。</div>
       </div>
       <div class="score-bar">
         <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-med" style="width:55.5%;"></div></div>
-        <div class="score-wrap"><span class="score-val cw">55.5</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">17.5</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">10</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">55.5</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv cw">间接</span>影响</div><div class="sf"><span class="sfv cs">SELECT</span>操作</div><div class="sf"><span class="sfv cw">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">中频</span>量级</div></div>
+        <div class="score-wrap"><span class="score-val" style="color:var(--warning);">55.5</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">17.5</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">10</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">55.5</span></div></div></div>
+        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">SELECT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--warning);">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">中频</span>量级</div></div>
       </div>
     </div>
-  </div>
 
-  <!-- ======== CARD 4: No DB ======== -->
-  <div class="rc" id="c4">
-    <div class="rc-h" onclick="tog('c4')">
-      <span class="rc-nm">剪映*获取广告配置</span>
-      <span><span class="rc-tp">核心链路</span></span>
-      <span class="rc-inf">本次变更间接影响HandleGetAdConfig接口调用路径，经静态分析<strong>未涉及核心DB表操作</strong>，接口入参与返回结构无变化，仅存在链路可用性风险，兼容性风险较低</span>
-      <span class="rc-rk cw">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（无DB）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">库表等级（—）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">数据量级（—）</span><span class="rk-row-r">17</span></div><div class="rk-total"><span>综合评分</span><span style="color:#86909C;">35.0</span></div></div></span>
-      <span><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div></span>
-      <span class="cv cv-n">未覆盖</span>
-      <span class="rc-ex">展开详情 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <!-- ======== ROW 4: No DB ======== -->
+    <div class="rt-row" data-type="svc" id="r4" onclick="togRow('r4')">
+      <span class="rt-name">剪映*获取广告配置</span>
+      <span class="rt-type"><span class="type-tag tag-core">核心链路</span><span class="type-tag tag-svc">仅服务</span></span>
+      <span class="rt-info"><strong>[稳定性]</strong> <span class="code">SceneRewardFreeAd</span> 新增路由分支扩大了 <span class="code">HandleGetAdConfig</span> 的调用面，新场景流量叠加后该接口的 P99 延迟可能上升，存在链路可用性风险；修正方向：在路由层对新场景增加独立限流策略，或拆分接口避免影响存量广告配置请求。接口入参与返回结构未变更，无功能兼容性风险。</span>
+      <span class="rt-level lv-m">🔶 中风险<div class="rk-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（无DB）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">库表等级（—）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">数据量级（—）</span><span class="rk-row-r">17</span></div><div class="rk-total"><span>综合评分</span><span style="color:#86909C;">35.0</span></div></div></span>
+      <span class="rt-adopt"><div class="tw on" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="dt"></div></div>采纳</span>
+      <span><span class="cv cv-n">未覆盖</span></span>
+      <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     </div>
-    <div class="rc-b">
+    <div class="detail-panel" id="d4">
       <div class="chain-area">
-        <div class="chain-head"><div class="chain-title"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8H14M10 4L14 8L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-none">○ 无DB影响</span></div></div>
+        <div class="chain-head">
+          <div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-none">○ 无DB影响</span></div>
+        </div>
         <div class="chain-canvas"><div class="chain-flow">
-          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event, 'diff-c4')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">路由逻辑变更</div></div><span class="nd-lbl">📝 代码变更</span></div>
+          <div class="nd"><div class="nd-box nd-code" onclick="showDiff(event,'diff-c4')"><div>+ SceneRewardFreeAd</div><div class="nd-sub">路由逻辑变更</div></div><span class="nd-lbl">📝 代码变更</span></div>
           <div class="ar"><div class="ar-line ar-orange"></div><span class="ar-lbl ar-lbl-o">间接触发</span></div>
           <div class="nd"><div class="nd-box nd-svc"><div>HandleGetAdConfig</div><div class="nd-sub">faceu.commerce.ad_api</div></div><span class="nd-lbl">🔌 链路入口</span></div>
           <div class="ar"><div class="ar-line ar-dashed"></div><span class="ar-lbl" style="color:var(--success);">✓ 无DB操作</span></div>
@@ -408,121 +425,96 @@
       </div>
       <div class="cot-area">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">AI 变更影响解释</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-body">本次变更通过路由逻辑间接影响 <span class="code">HandleGetAdConfig</span> 接口的调用路径，但经静态数据流分析和调用链追踪，该路径<strong>未涉及任何核心DB库表操作</strong>，风险仅限于接口层面的可用性影响。接口本身的入参和返回结构未发生变化，兼容性风险较低。</div>
+        <div class="cot-body"><strong>[稳定性]</strong> <span class="code">SceneRewardFreeAd</span> 新增路由分支扩大了 <span class="code">HandleGetAdConfig</span> 的调用面，新场景流量叠加后该接口的 P99 延迟可能上升，存在链路可用性风险；修正方向：在路由层对新场景增加独立限流策略，或拆分接口避免影响存量广告配置请求。<br/><br/>接口入参与返回结构未变更，无功能兼容性风险。经静态数据流分析和调用链追踪，该路径<span class="hl">未涉及任何核心DB库表操作</span>，风险仅限于接口层面的可用性影响。</div>
       </div>
       <div class="score-bar">
         <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-low" style="width:35%;"></div></div>
         <div class="score-wrap"><span class="score-val" style="color:var(--text-2);">35.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（无DB）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">库表等级（—）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">数据量级（—）</span><span class="rk-row-r">17</span></div><div class="rk-total"><span>综合评分</span><span style="color:#86909C;">35.0</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv cw">间接</span>影响</div><div class="sf"><span class="sfv cs">无</span>DB操作</div><div class="sf"><span class="sfv" style="color:var(--text-3);">—</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">—</span>量级</div></div>
+        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">无</span>DB操作</div><div class="sf"><span class="sfv" style="color:var(--text-3);">—</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">—</span>量级</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== Code Diff Popover (shared, repositioned per click) ===== -->
+<!-- Code Diff Popover -->
 <div class="diff-popover-overlay" id="diffOverlay" onclick="closeDiff()">
   <div class="diff-popover" id="diffPopover" onclick="event.stopPropagation()">
-    <div class="diff-popover-arrow" id="diffArrow"></div>
     <div class="diff-pop-header">
       <div class="diff-pop-title">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 1H10C11.1 1 12 1.9 12 3V11C12 12.1 11.1 13 10 13H4C2.9 13 2 12.1 2 11V3C2 1.9 2.9 1 4 1Z" stroke="currentColor" stroke-width="1.2"/><path d="M5 5H9M5 7H9M5 9H7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         变更代码
-        <span class="diff-pop-file">app/service/frisbee/frisbee.go</span>
+        <span class="diff-pop-file" id="diffFileName">app/service/frisbee/frisbee.go</span>
       </div>
       <button class="diff-pop-close" onclick="closeDiff()">✕</button>
     </div>
-    <div class="diff-pop-body" id="diffBody"></div>
+    <div class="diff-code" id="diffContent">
+      <div class="diff-line diff-ctx"><span class="diff-ln">299</span><span class="diff-ct">func (s *FrisbeeService) GetFrisbeeResult(ctx context.Context, scene string) (*Result, error) {</span></div>
+      <div class="diff-line diff-ctx"><span class="diff-ln">300</span><span class="diff-ct">    switch scene {</span></div>
+      <div class="diff-line diff-ctx"><span class="diff-ln">301</span><span class="diff-ct">    case SceneRewardCoin, SceneRewardVip:</span></div>
+      <div class="diff-line diff-ctx"><span class="diff-ln">302</span><span class="diff-ct">        return s.handleReward(ctx, scene)</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">303</span><span class="diff-ct">+   case SceneRewardFreeAd:</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">304</span><span class="diff-ct">+       return s.handleRewardFreeAd(ctx, scene)</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">305</span><span class="diff-ct">+       // 新增免广奖励场景</span></div>
+      <div class="diff-line diff-ctx"><span class="diff-ln">306</span><span class="diff-ct">    default:</span></div>
+      <div class="diff-line diff-ctx"><span class="diff-ln">307</span><span class="diff-ct">        return nil, fmt.Errorf("unknown scene: %s", scene)</span></div>
+      <div class="diff-line diff-ctx"><span class="diff-ln">308</span><span class="diff-ct">    }</span></div>
+      <div class="diff-line diff-ctx"><span class="diff-ln">309</span><span class="diff-ct">}</span></div>
+      <div class="diff-line diff-ctx"><span class="diff-ln"></span><span class="diff-ct"></span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">320</span><span class="diff-ct">+func (s *FrisbeeService) handleRewardFreeAd(ctx context.Context, scene string) (*Result, error) {</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">321</span><span class="diff-ct">+   event := &RewardEvent{</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">322</span><span class="diff-ct">+       EventName: "free_ad_reward",</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">323</span><span class="diff-ct">+       TaskKey:   "ad_free_" + scene,</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">324</span><span class="diff-ct">+   }</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">325</span><span class="diff-ct">+   if err := s.rewardRepo.InsertRewardEvent(ctx, event); err != nil {</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">326</span><span class="diff-ct">+       return nil, err</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">327</span><span class="diff-ct">+   }</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">328</span><span class="diff-ct">+   return s.getFrisbeeAd(ctx, scene)</span></div>
+      <div class="diff-line diff-add"><span class="diff-ln">329</span><span class="diff-ct">+}</span></div>
+    </div>
   </div>
 </div>
 
 <script>
-function tog(id){document.getElementById(id).classList.toggle('exp');}
+function togRow(id) {
+  var row = document.getElementById(id);
+  var detail = document.getElementById('d' + id.substring(1));
+  var isExpanded = row.classList.contains('expanded');
+  // close all
+  document.querySelectorAll('.rt-row').forEach(function(r){r.classList.remove('expanded');});
+  document.querySelectorAll('.detail-panel').forEach(function(d){d.classList.remove('show');});
+  if (!isExpanded) {
+    row.classList.add('expanded');
+    detail.classList.add('show');
+  }
+}
 
-/* Diff Popover Logic */
-var diffData = {};
-diffData['diff-c1'] = '<table class="diff-table">'
-+'<tr class="diff-hunk"><td colspan="2"></td><td>@@ -291,15 +291,17 @@ func GetFrisbeeResult(...)</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">291</td><td class="diff-ln">291</td><td class="diff-content">    extraParams := MakeFrisbeeExtraParams(ctx, abParamsStr)</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">292</td><td class="diff-ln">292</td><td class="diff-content">    var eventName, taskKey string</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">293</td><td class="diff-ln">293</td><td class="diff-content">    switch scene {</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">294</td><td class="diff-ln">294</td><td class="diff-content">    case constant.SceneBanner:</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">295</td><td class="diff-ln">295</td><td class="diff-content">        eventName, taskKey = constant.AdStrategyFrisbeeAlbumBannerEventName, constant.AdStrategyFrisbeeAlbumBanner</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">296</td><td class="diff-ln">296</td><td class="diff-content">    case constant.SceneVideoEditAlbum:</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">297</td><td class="diff-ln">297</td><td class="diff-content">        eventName, taskKey = constant.AdStrategyFrisbeeVideoEditAlbumEventName, constant.AdStrategyFrisbeeVideoEditA</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">298</td><td class="diff-ln">298</td><td class="diff-content">    case constant.SceneHotSplash:</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">299</td><td class="diff-ln">299</td><td class="diff-content">        eventName, taskKey = constant.AdStrategyFrisbeeSplashEventName, constant.AdStrategyFrisbeeHotSplashTaskKey</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">300</td><td class="diff-ln">300</td><td class="diff-content">    case constant.SceneRetouchReward:</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">301</td><td class="diff-ln">301</td><td class="diff-content">        eventName, taskKey = constant.RetouchStrategyFrisbeeRewardEventName, constant.RetouchStrategyFrisbeeReward</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">302</td><td class="diff-ln">302</td><td class="diff-content">    case constant.SceneUserInfo:</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">303</td><td class="diff-ln">303</td><td class="diff-content">        eventName, taskKey = constant.UserInfoStrategyFrisbeeEventName, constant.UserInfoStrategyFrisbeeTaskKey</td></tr>'
-+'<tr class="diff-add"><td class="diff-ln"></td><td class="diff-ln">304</td><td class="diff-content"><span class="diff-highlight">+   case constant.SceneRewardFreeAd:</span></td></tr>'
-+'<tr class="diff-add"><td class="diff-ln"></td><td class="diff-ln">305</td><td class="diff-content"><span class="diff-highlight">+       eventName, taskKey = constant.RewardFreeAdStrategyFrisbeeEventName, constant.RewardFreeAdStrategyFrisbeeTa</span></td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">304</td><td class="diff-ln">306</td><td class="diff-content">    }</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">305</td><td class="diff-ln">307</td><td class="diff-content"></td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">306</td><td class="diff-ln">308</td><td class="diff-content">    result, err := GetFrisbeeRewardItemList(ctx, eventName, taskKey, extraParams)</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">307</td><td class="diff-ln">309</td><td class="diff-content">    if err != nil {</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">308</td><td class="diff-ln">310</td><td class="diff-content">        logs.CtxError(ctx, "CallFrisbee failed, err: %+v", err)</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">309</td><td class="diff-ln">311</td><td class="diff-content">        errMsg = "get_fail"</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">310</td><td class="diff-ln">312</td><td class="diff-content">        return nil, err</td></tr>'
-+'</table>';
-
-var shortDiff = '<table class="diff-table">'
-+'<tr class="diff-hunk"><td colspan="2"></td><td>@@ -303,0 +304,2 @@ func GetFrisbeeResult(...)</td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">303</td><td class="diff-ln">303</td><td class="diff-content">        eventName, taskKey = constant.UserInfoStrategyFrisbeeEventName, constant.UserInfoStrategyFrisbeeTaskKey</td></tr>'
-+'<tr class="diff-add"><td class="diff-ln"></td><td class="diff-ln">304</td><td class="diff-content"><span class="diff-highlight">+   case constant.SceneRewardFreeAd:</span></td></tr>'
-+'<tr class="diff-add"><td class="diff-ln"></td><td class="diff-ln">305</td><td class="diff-content"><span class="diff-highlight">+       eventName, taskKey = constant.RewardFreeAdStrategyFrisbeeEventName, constant.RewardFreeAdStrategyFrisbeeTa</span></td></tr>'
-+'<tr class="diff-ctx"><td class="diff-ln">304</td><td class="diff-ln">306</td><td class="diff-content">    }</td></tr>'
-+'</table>';
-
-diffData['diff-c2'] = shortDiff;
-diffData['diff-c3'] = shortDiff;
-diffData['diff-c4'] = shortDiff;
+function filterRows(type, btn) {
+  document.querySelectorAll('.rs-fb').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  document.querySelectorAll('.rt-row').forEach(function(r){
+    var detail = document.getElementById('d' + r.id.substring(1));
+    if (type === 'all') {
+      r.style.display = '';
+      detail.style.display = '';
+    } else {
+      var match = r.getAttribute('data-type') === type;
+      r.style.display = match ? '' : 'none';
+      detail.style.display = match ? '' : 'none';
+      if (!match) {
+        r.classList.remove('expanded');
+        detail.classList.remove('show');
+      }
+    }
+  });
+}
 
 function showDiff(e, diffId) {
   e.stopPropagation();
-  var overlay = document.getElementById('diffOverlay');
-  var popover = document.getElementById('diffPopover');
-  var arrow = document.getElementById('diffArrow');
-  var body = document.getElementById('diffBody');
-
-  body.innerHTML = diffData[diffId] || '';
-
-  var rect = e.currentTarget.getBoundingClientRect();
-  var popW = 700;
-  var left = rect.left + rect.width / 2 - 70;
-  var top = rect.bottom + 12;
-
-  if (left + popW > window.innerWidth - 20) left = window.innerWidth - popW - 20;
-  if (left < 20) left = 20;
-
-  popover.style.left = left + 'px';
-  popover.style.top = top + 'px';
-
-  var arrowLeft = rect.left + rect.width / 2 - left;
-  if (arrowLeft < 24) arrowLeft = 24;
-  if (arrowLeft > popW - 24) arrowLeft = popW - 24;
-  arrow.style.left = arrowLeft + 'px';
-
-  overlay.classList.add('show');
+  document.getElementById('diffOverlay').classList.add('show');
 }
-
 function closeDiff() {
   document.getElementById('diffOverlay').classList.remove('show');
 }
-
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeDiff();
-});
-
-document.querySelectorAll('.rc').forEach(function(c, i) {
-  c.style.opacity = '0';
-  c.style.transform = 'translateY(16px)';
-  c.style.transition = 'all .45s ease-out';
-  setTimeout(function() {
-    c.style.opacity = '1';
-    c.style.transform = 'translateY(0)';
-  }, 200 + i * 120);
-});
 </script>
 </body>
 </html>
