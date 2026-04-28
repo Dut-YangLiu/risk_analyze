@@ -166,10 +166,10 @@
   .cot-badge{font-size:9px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;}
 
   .cot-chain{display:flex;flex-direction:column;gap:0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);}
-  .cot-step{display:flex;align-items:stretch;}
-  .cot-step-label{width:80px;min-width:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 8px;font-weight:700;font-size:13px;color:var(--bg-2);position:relative;}
-  .cot-step-label .cot-step-sub{font-size:9px;font-weight:400;opacity:.8;margin-top:2px;}
-  .cot-step-body{flex:1;padding:12px 16px;font-size:13px;line-height:1.8;color:var(--text-1);}
+  .cot-step{display:flex;align-items:flex-start;gap:0;}
+  .cot-step-label{width:56px;min-width:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 4px;font-weight:700;font-size:12px;color:var(--bg-2);position:relative;}
+  .cot-step-label .cot-step-sub{display:block;font-size:9px;font-weight:400;opacity:0.7;margin-top:1px;letter-spacing:0.5px;}
+  .cot-step-body{flex:1;padding:6px 10px;font-size:12px;line-height:1.6;color:var(--text-1);}
   .cot-step-body .code{font-family:'SF Mono','Menlo',monospace;background:var(--bg-3);padding:1px 5px;border-radius:3px;font-size:12px;color:#531DAB;}
   .cot-step-body .hl{color:var(--danger);font-weight:700;}
   .cot-step-body .hl-warn{color:var(--warning);font-weight:600;text-decoration:underline;text-decoration-color:var(--warning);text-underline-offset:2px;}
@@ -185,6 +185,39 @@
   .step-cause .cot-step-body{background:#FFF8F8;}
 
   /* CoT footer */
+
+
+  .cot-risk-point{margin-bottom:6px;}
+  .cot-risk-point:last-child{margin-bottom:0;}
+  .cot-risk-num{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:2px;padding:1px 0;}
+  .cot-risk-num .rn-badge{width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+  .rn-badge.rn-stable{background:linear-gradient(135deg,#E65100,#FF8F00);}
+  .rn-badge.rn-func{background:linear-gradient(135deg,#6B21A8,#9333EA);}
+  .rn-badge.rn-avail{background:linear-gradient(135deg,#1D4ED8,#3B82F6);}
+  /* Risk type tabs */
+  .cot-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:10px;}
+  .cot-tab{padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--text-3);transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;user-select:none;}
+  .cot-tab:hover{color:var(--text-1);background:var(--bg-3);border-radius:6px 6px 0 0;}
+  .cot-tab.tab-active{color:var(--primary);border-bottom-color:var(--primary);}
+  .cot-tab .tab-icon{font-size:13px;}
+  .cot-tab .tab-count{font-size:10px;padding:0 5px;border-radius:8px;font-weight:700;line-height:16px;}
+  .cot-tab.tab-stable .tab-count{background:#FFF3E0;color:#E65100;}
+  .cot-tab.tab-func .tab-count{background:#F3E8FF;color:#6B21A8;}
+  .cot-tab.tab-avail .tab-count{background:#EFF6FF;color:#1D4ED8;}
+  .cot-tab-panel{display:none;}
+  .cot-tab-panel.panel-active{display:block;}
+  .cot-chain-group{margin-bottom:0;}
+  .cot-chain-label{display:none;}
+  .cot-chain-divider{display:none;}
+
+  .cot-summary{font-size:12px;color:var(--text-2);margin:4px 0 12px;line-height:1.6;display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;}
+  .cot-summary .cs-tag{display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:3px;font-size:11px;font-weight:600;}
+  .cot-summary .cs-danger{background:#FFF0F0;color:#CB272D;border:1px solid #FFCDD2;}
+  .cot-summary .cs-warning{background:#FFF8E6;color:#D46B08;border:1px solid #FFE7A3;}
+  .cot-summary .cs-purple{background:#F5F0FF;color:#6B21A8;border:1px solid #E9D5FF;}
+  .cot-summary .cs-blue{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
+  .cot-summary .cs-score{font-weight:700;font-size:13px;}
+  .cot-summary .cs-sep{color:var(--border);font-size:10px;}
   .cot-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding:10px 16px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);}
   .cot-meta{display:flex;gap:16px;font-size:11px;color:var(--text-3);}
   .cot-meta-item{display:flex;align-items:center;gap:4px;}
@@ -321,26 +354,43 @@
       </div>
 
       <!-- CoT 因果链 — Row 1 -->
-      <div class="cot-area">
+      <div class="cot-area" id="cot1">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">风险定性（核心推理）</span><span class="cot-badge">CoT</span></div>
-        <p style="font-size:12px;color:var(--text-3);margin-bottom:10px;">通过「因为→所以→但是→导致」四段式因果链，清楚展示从需求到风险的完整推导逻辑：</p>
+        <div class="cot-summary"><span class="cs-tag cs-danger">功能点风险 · 资损类</span><span class="cs-sep">|</span><span>触发条件：网络抖动重试 / 并发请求 / DB写入延迟</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--danger);">93.5</span></span></div>
 
-        <div class="cot-chain">
-          <div class="cot-step step-because">
-            <div class="cot-step-label"><span>因为</span><span class="cot-step-sub">需求驱动</span></div>
-            <div class="cot-step-body">需求要求在剪映广告场景中新增「<strong>免广告权益</strong>」激励场景——用户观看激励广告后获得一次免广告权益</div>
+        <div class="cot-tabs">
+          <div class="cot-tab tab-stable tab-active" onclick="switchTab('cot1',0)"><span class="tab-icon">🛡️</span>DB / 稳定性<span class="tab-count">2</span></div>
+          <div class="cot-tab tab-func" onclick="switchTab('cot1',1)"><span class="tab-icon">⚡</span>功能风险<span class="tab-count">1</span></div>
+        </div>
+        <div class="cot-tab-panel panel-active">
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-stable">1</span>重复写入 — 无唯一约束 + 无幂等校验</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">需求要求新增「免广告权益」激励场景，用户观看激励广告后可获得免广告权益</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body">代码通过 <span class="code">RetryGrantReward</span> 重试 5 次调用 <span class="code">db.Create</span> 写入 P0 表 <span class="code">scene_reward_free_ad</span></div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body">INSERT <span class="hl-warn">无唯一约束</span>（缺 <span class="code">user_id+scene_id</span> 联合索引），重试<span class="hl-warn">无幂等校验</span></div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body">超时重试 → 同一用户<span class="hl">多条权益记录</span> → 权益重复发放 → <span class="hl">广告收入资损</span></div></div>
+            </div>
           </div>
-          <div class="cot-step step-so">
-            <div class="cot-step-label"><span>所以</span><span class="cot-step-sub">代码实现</span></div>
-            <div class="cot-step-body">代码在 <span class="code">GetGroMoreAd</span> 的场景路由 Switch 中新增 case <span class="code">SceneRewardFreeAd</span> 分支，调用 <span class="code">handleRewardFreeAd</span> 方法，内部通过 <span class="code">RetryGrantReward</span> 重试 <strong>5 次</strong>调用 <span class="code">db.Create</span> 写入 <span class="code">scene_reward_free_ad</span> 表</div>
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-stable">2</span>DB 写热点 — P0 表写入无限流兜底</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">每次观看广告成功后需 <span class="code">db.Create</span> 写入发放记录</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body"><span class="code">handleRewardFreeAd</span> → <span class="code">db.Create</span> 直接 INSERT P0 表，频率与用户观看广告频率正相关</div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body">新增 INSERT 路径<span class="hl-warn">无限流兜底</span>（无 QPS 限制、无熔断降级）</div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body">流量高峰时 <span class="hl">DB 写热点</span>，影响 P0 表读写延迟和可用性</div></div>
+            </div>
           </div>
-          <div class="cot-step step-but">
-            <div class="cot-step-label"><span>但是</span><span class="cot-step-sub">缺陷发现</span></div>
-            <div class="cot-step-body"><span class="code">db.Create</span> 的 INSERT 操作<span class="hl-warn">无唯一约束</span>（缺少 <span class="code">user_id + scene_id</span> 联合唯一索引），且 <span class="code">RetryGrantReward</span> 的重试机制<span class="hl-warn">没有幂等校验</span>（无「先查后写」或 INSERT ON CONFLICT 逻辑）</div>
-          </div>
-          <div class="cot-step step-cause">
-            <div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险后果</span></div>
-            <div class="cot-step-body">在网络抖动/超时重试场景下，同一用户可能被写入<span class="hl">多条权益记录</span>，造成<span class="hl">免广告权益重复发放</span> → 用户免广告时长被多倍放大 → 广告曝光量下降 → <span class="hl">直接影响广告收入（资损）</span></div>
+        </div>
+        <div class="cot-tab-panel">
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-func">1</span>奖励去重逻辑缺失 — 可重复领取</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">需求要求同一用户同一场景仅可领取一次免广告权益</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body"><span class="code">handleRewardFreeAd</span> 通过 <span class="code">db.Create</span> 写入 <span class="code">scene_reward_free_ad</span> 表，依赖 DB 保障唯一性</div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body"><span class="code">userId+sceneId</span> <span class="hl-warn">无联合唯一约束</span>，代码层也<span class="hl-warn">未做去重校验</span></div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body">用户<span class="hl">重复领取权益</span> → 免广时长多倍放大 → <span class="hl">「一次一权益」规则失效</span></div></div>
+            </div>
           </div>
         </div>
 
@@ -352,20 +402,6 @@
           </div>
           <div class="cot-detail-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
-<div class="cot-footer">
-          <div class="cot-meta">
-            <div class="cot-meta-item"><span class="cot-meta-dot" style="background:var(--danger);"></span><span>风险类别：<strong style="color:var(--danger);">功能点风险</strong> 资损类</span></div>
-            <div class="cot-meta-item"><span class="cot-meta-dot" style="background:var(--warning);"></span><span>触发条件：网络抖动重试 / 并发请求 / DB写入延迟</span></div>
-          </div>
-<a class="cot-detail-link" href="#"></a>
-        </div>
-      </div>
-
-      <div class="score-bar">
-        <span class="score-lbl">综合风险</span>
-        <div class="score-track"><div class="score-fill sf-high" style="width:93.5%;"></div></div>
-        <div class="score-wrap"><span class="score-val" style="color:var(--danger);">93.5</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div><div class="rk-row"><span class="rk-row-l">操作类型（INSERT）</span><span class="rk-row-r">22.5</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P0）</span><span class="rk-row-r">25</span></div><div class="rk-row"><span class="rk-row-l">数据量级（高频）</span><span class="rk-row-r">16</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FF6B6B;">93.5</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--danger);">直接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--warning);">INSERT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--danger);">P0</span>库表</div><div class="sf"><span class="sfv" style="color:var(--warning);">高频</span>量级</div></div>
       </div>
     </div>
 
@@ -395,14 +431,34 @@
           <div class="nd-db-wrap"><div class="db-cylinder"><span class="db-level lv-p1">P1</span><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFE8CC"/><rect x="12" y="18" width="136" height="60" fill="#FFF2E0"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#FFE8CC"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFD699" stroke="#FF7D00" stroke-width="2"/><path d="M12 18V78" stroke="#FF7D00" stroke-width="2"/><path d="M148 18V78" stroke="#FF7D00" stroke-width="2"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#FF7D00" stroke-width="2" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#A35200;">frisbee_reward_config</div><div class="db-cyl-desc" style="color:#A35200;">奖励配置表</div><div class="db-cyl-ops"><span class="op-t op-s">SELECT</span></div></div></div><span class="nd-lbl">💾 配置DB表</span></div>
         </div></div>
       </div>
-      <div class="cot-area">
+      <div class="cot-area" id="cot2">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">风险定性（核心推理）</span><span class="cot-badge">CoT</span></div>
-        <p style="font-size:12px;color:var(--text-3);margin-bottom:10px;">通过「因为→所以→但是→导致」四段式因果链，清楚展示从需求到风险的完整推导逻辑：</p>
-        <div class="cot-chain">
-          <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">需求驱动</span></div><div class="cot-step-body">需求要求新增「免广告权益」激励场景，<span class="code">SceneRewardFreeAd</span> 场景需要读取对应的奖励策略配置来决定发放规则</div></div>
-          <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">代码实现</span></div><div class="cot-step-body">代码通过 <span class="code">LoadRewardConfig</span> 从 <span class="code">frisbee_reward_config</span> 表按 <span class="code">sceneId</span> 查询奖励策略配置行，获取发放金额、次数上限等参数</div></div>
-          <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">缺陷发现</span></div><div class="cot-step-body">代码变更<span class="hl-warn">未包含配置写入</span>——<span class="code">frisbee_reward_config</span> 表中缺少 <span class="code">SceneRewardFreeAd</span> 对应的奖励策略行；同时新场景首次请求<span class="hl-warn">缓存冷启</span>，每次穿透到 DB</div></div>
-          <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险后果</span></div><div class="cot-step-body"><strong>[功能]</strong> 上线后新场景查询配置为空，命中降级逻辑，<span class="hl">免广弹窗不弹出</span>，需求功能完全失效<br/><strong>[稳定性]</strong> 高峰期大量请求穿透缓存直达 DB，可能造成 <span class="hl">P1 配置表读压力回归</span></div></div>
+        <div class="cot-summary"><span class="cs-tag cs-purple">功能点风险</span><span class="cs-tag cs-warning">稳定性风险</span><span class="cs-sep">|</span><span>触发条件：上线后即触发（配置缺失）</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--warning);">62.0</span></span></div>
+        <div class="cot-tabs">
+          <div class="cot-tab tab-func tab-active" onclick="switchTab('cot2',0)"><span class="tab-icon">⚡</span>功能风险<span class="tab-count">1</span></div>
+          <div class="cot-tab tab-stable" onclick="switchTab('cot2',1)"><span class="tab-icon">🛡️</span>DB / 稳定性<span class="tab-count">1</span></div>
+        </div>
+        <div class="cot-tab-panel panel-active">
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-func">1</span>新场景配置缺失 — 免广弹窗不弹出</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">新增 <span class="code">SceneRewardFreeAd</span> 需读取奖励策略配置来决定发放规则</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body"><span class="code">LoadRewardConfig</span> 从 <span class="code">frisbee_reward_config</span> 按 <span class="code">sceneId</span> 查询配置行</div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body">变更<span class="hl-warn">未包含配置写入</span>——配置表中缺少对应奖励策略行，查询为空</div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body">命中降级逻辑 → <span class="hl">免广弹窗不弹出</span> → <span class="hl">需求功能完全失效</span></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="cot-tab-panel">
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-stable">1</span>缓存穿透 — 空结果不写缓存致持续回源</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">新场景每次请求需读取 <span class="code">frisbee_reward_config</span> 奖励策略配置</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body"><span class="code">LoadRewardConfig</span> 缓存 + DB 回源，缓存失效时穿透 DB SELECT</div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body">配置行不存在 → 空结果<span class="hl-warn">不写缓存</span> → <span class="hl-warn">每次请求都穿透 DB</span></div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body">高峰期持续穿透 → <span class="hl">P1 配置表读压力回归</span></div></div>
+            </div>
+          </div>
         </div>
                 <div class="cot-detail-block" onclick="event.stopPropagation();alert('跳转至 Agent 风险分析页\n\n可查看：\n• 完整 7 步 CoT 推理链\n• 存量功能影响分析\n• 验证建议与回归场景\n• 监控指标与灰度策略\n• 回滚预案')">
           <div class="cot-detail-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 6V11C3 16.5 6.8 20.7 11 22C15.2 20.7 19 16.5 19 11V6L11 2Z" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="1.5"/><path d="M8 11L10 13L14 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -412,18 +468,6 @@
           </div>
           <div class="cot-detail-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
-<div class="cot-footer">
-          <div class="cot-meta">
-            <div class="cot-meta-item"><span class="cot-meta-dot" style="background:var(--purple);"></span><span>风险类别：<strong style="color:var(--purple);">功能点风险</strong> + <strong style="color:var(--warning);">稳定性风险</strong></span></div>
-            <div class="cot-meta-item"><span class="cot-meta-dot" style="background:var(--warning);"></span><span>触发条件：上线后即触发（配置缺失）</span></div>
-          </div>
-          <a class="cot-detail-link" href="#"></a>
-        </div>
-      </div>
-      <div class="score-bar">
-        <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-med" style="width:62%;"></div></div>
-        <div class="score-wrap"><span class="score-val" style="color:var(--warning);">62.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">14</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">62.0</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">SELECT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--warning);">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--warning);">中频</span>量级</div></div>
       </div>
     </div>
 
@@ -451,14 +495,43 @@
           <div class="nd-db-wrap"><div class="db-cylinder"><span class="db-level lv-p1">P1</span><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFE8CC"/><rect x="12" y="18" width="136" height="60" fill="#FFF2E0"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#FFE8CC"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#FFD699" stroke="#FF7D00" stroke-width="2"/><path d="M12 18V78" stroke="#FF7D00" stroke-width="2"/><path d="M148 18V78" stroke="#FF7D00" stroke-width="2"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#FF7D00" stroke-width="2" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#A35200;">ad_placement_config</div><div class="db-cyl-desc" style="color:#A35200;">广告位配置表（共用）</div><div class="db-cyl-ops"><span class="op-t op-s">SELECT</span></div></div></div><span class="nd-lbl">💾 共用DB表</span></div>
         </div></div>
       </div>
-      <div class="cot-area">
+      <div class="cot-area" id="cot3">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">风险定性（核心推理）</span><span class="cot-badge">CoT</span></div>
-        <p style="font-size:12px;color:var(--text-3);margin-bottom:10px;">通过「因为→所以→但是→导致」四段式因果链，清楚展示从需求到风险的完整推导逻辑：</p>
-        <div class="cot-chain">
-          <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">需求驱动</span></div><div class="cot-step-body">需求要求新增免广告奖励场景，该场景需要在广告位配置中获取对应的展示策略，<span class="code">ad_placement_config</span> 是醒图/剪映共用的广告配置表</div></div>
-          <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">代码实现</span></div><div class="cot-step-body"><span class="code">HandleGetAdConfig</span> 新增场景枚举后，查询 <span class="code">ad_placement_config</span> 的请求量将增加，新场景的增量查询叠加在现有醒图+剪映流量之上</div></div>
-          <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">缺陷发现</span></div><div class="cot-step-body">该表为<span class="hl-warn">双端共用表</span>，缓存 key 按场景隔离但 TTL 统一，新场景流量尖峰时段与现有缓存刷新窗口重叠；同时广告位配置<span class="hl-warn">未覆盖新奖励场景</span>的展示规则</div></div>
-          <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险后果</span></div><div class="cot-step-body"><strong>[稳定性]</strong> 缓存集中失效时增量查询穿透 DB，可能引发 <span class="hl">慢查询影响双端广告加载</span><br/><strong>[功能]</strong> 醒图侧广告位配置缺少新场景映射，可能出现<span class="hl">空广告位或兜底素材展示异常</span></div></div>
+        <div class="cot-summary"><span class="cs-tag cs-warning">性能稳定性风险</span><span class="cs-tag cs-purple">功能点风险</span><span class="cs-sep">|</span><span>触发条件：缓存失效窗口 / 配置缺失</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--warning);">71.0</span></span></div>
+        <div class="cot-tabs">
+          <div class="cot-tab tab-stable tab-active" onclick="switchTab('cot3',0)"><span class="tab-icon">🛡️</span>DB / 稳定性<span class="tab-count">1</span></div>
+          <div class="cot-tab tab-func" onclick="switchTab('cot3',1)"><span class="tab-icon">⚡</span>功能风险<span class="tab-count">2</span></div>
+        </div>
+        <div class="cot-tab-panel panel-active">
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-stable">1</span>缓存集中失效 — 双端共用表增量穿透</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">新增场景需从醒图/剪映<strong>共用</strong>表 <span class="code">ad_placement_config</span> 获取展示策略</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body"><span class="code">HandleGetAdConfig</span> 新增枚举，增量查询叠加在现有双端流量之上</div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body">共用表缓存 TTL 统一，新场景流量尖峰与缓存刷新窗口<span class="hl-warn">重叠</span></div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body">缓存集中失效 → 增量穿透 DB → <span class="hl">慢查询影响双端广告加载</span></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="cot-tab-panel">
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-func">1</span>醒图侧广告位映射缺失 — 空广告位</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">新增场景需在广告位配置中映射展示规则</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body"><span class="code">HandleGetAdConfig</span> 新增 <span class="code">SceneRewardFreeAd</span> 枚举，从 <span class="code">ad_placement_config</span> 查询展示规则</div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body">醒图侧配置<span class="hl-warn">缺少新场景映射行</span>，查询为空</div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body">醒图侧出现<span class="hl">空广告位</span>或<span class="hl">兜底素材异常</span></div></div>
+            </div>
+          </div>
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-func">2</span>剪映侧展示策略缺失 — 兜底降级</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">剪映侧免广入口也依赖 <span class="code">ad_placement_config</span> 展示策略</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body">剪映通过 <span class="code">HandleGetAdConfig</span> 拉取新场景展示规则</div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body"><span class="code">SceneRewardFreeAd</span> <span class="hl-warn">展示策略未配置</span>，命中默认兜底</div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body">可能<span class="hl">展示错误默认样式</span>或特定机型下<span class="hl">不展示</span></div></div>
+            </div>
+          </div>
         </div>
                 <div class="cot-detail-block" onclick="event.stopPropagation();alert('跳转至 Agent 风险分析页\n\n可查看：\n• 完整 7 步 CoT 推理链\n• 存量功能影响分析\n• 验证建议与回归场景\n• 监控指标与灰度策略\n• 回滚预案')">
           <div class="cot-detail-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 6V11C3 16.5 6.8 20.7 11 22C15.2 20.7 19 16.5 19 11V6L11 2Z" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="1.5"/><path d="M8 11L10 13L14 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -468,18 +541,6 @@
           </div>
           <div class="cot-detail-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
-<div class="cot-footer">
-          <div class="cot-meta">
-            <div class="cot-meta-item"><span class="cot-meta-dot" style="background:var(--warning);"></span><span>风险类别：<strong style="color:var(--warning);">性能稳定性风险</strong> + <strong style="color:var(--purple);">功能点风险</strong></span></div>
-            <div class="cot-meta-item"><span class="cot-meta-dot" style="background:var(--warning);"></span><span>触发条件：缓存失效窗口 / 配置缺失</span></div>
-          </div>
-          <a class="cot-detail-link" href="#"></a>
-        </div>
-      </div>
-      <div class="score-bar">
-        <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-med" style="width:71%;"></div></div>
-        <div class="score-wrap"><span class="score-val" style="color:var(--warning);">71.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（直接）</span><span class="rk-row-r">30</span></div><div class="rk-row"><span class="rk-row-l">操作类型（SELECT）</span><span class="rk-row-r">10</span></div><div class="rk-row"><span class="rk-row-l">库表等级（P1）</span><span class="rk-row-r">20</span></div><div class="rk-row"><span class="rk-row-l">数据量级（中频）</span><span class="rk-row-r">11</span></div><div class="rk-total"><span>综合评分</span><span style="color:#FFB347;">71.0</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--danger);">直接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">SELECT</span>操作</div><div class="sf"><span class="sfv" style="color:var(--warning);">P1</span>库表</div><div class="sf"><span class="sfv" style="color:var(--warning);">中频</span>量级</div></div>
       </div>
     </div>
 
@@ -506,14 +567,22 @@
           <div class="nd-db-wrap"><div class="db-cylinder" style="opacity:.4;"><svg class="db-cyl-svg" viewBox="0 0 160 100" fill="none"><ellipse cx="80" cy="18" rx="68" ry="18" fill="#E8FFEA"/><rect x="12" y="18" width="136" height="60" fill="#F0FFF2"/><ellipse cx="80" cy="78" rx="68" ry="18" fill="#E8FFEA"/><ellipse cx="80" cy="18" rx="68" ry="18" fill="#D5F5D8" stroke="#00B42A" stroke-width="2" stroke-dasharray="6 4"/><path d="M12 18V78" stroke="#00B42A" stroke-width="2" stroke-dasharray="6 4"/><path d="M148 18V78" stroke="#00B42A" stroke-width="2" stroke-dasharray="6 4"/><ellipse cx="80" cy="78" rx="68" ry="18" stroke="#00B42A" stroke-width="2" stroke-dasharray="6 4" fill="none"/></svg><div class="db-cyl-content"><div class="db-cyl-name" style="color:#009A29;">— 无核心DB影响 —</div></div></div><span class="nd-lbl" style="color:var(--success);">✅ 安全</span></div>
         </div></div>
       </div>
-      <div class="cot-area">
+      <div class="cot-area" id="cot4">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">风险定性（核心推理）</span><span class="cot-badge">CoT</span></div>
-        <p style="font-size:12px;color:var(--text-3);margin-bottom:10px;">通过「因为→所以→但是→导致」四段式因果链，清楚展示从需求到风险的完整推导逻辑：</p>
-        <div class="cot-chain">
-          <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">需求驱动</span></div><div class="cot-step-body">需求要求新增免广告权益激励场景，所有广告场景的配置获取都经过 <span class="code">HandleGetAdConfig</span> 接口统一路由</div></div>
-          <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">代码实现</span></div><div class="cot-step-body">代码在 <span class="code">HandleGetAdConfig</span> 的场景路由中新增 <span class="code">SceneRewardFreeAd</span> 分支，新场景的请求流量将叠加到该接口的总调用量上</div></div>
-          <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">缺陷发现</span></div><div class="cot-step-body">新场景<span class="hl-warn">未配置独立限流策略</span>，与存量广告场景共享接口容量；接口入参与返回结构未变更，无功能兼容性问题</div></div>
-          <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险后果</span></div><div class="cot-step-body">新场景流量叠加后 <span class="code">HandleGetAdConfig</span> 的 <span class="hl">P99 延迟可能上升</span>，存在链路可用性风险；该路径未涉及核心DB库表操作，风险仅限于<span class="hl">接口层面的可用性影响</span></div></div>
+        <div class="cot-summary"><span class="cs-tag cs-blue">可用性风险</span><span class="cs-sep">|</span><span>触发条件：新场景流量叠加超过接口容量阈值</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--text-2);">35.0</span></span></div>
+        <div class="cot-tabs">
+          <div class="cot-tab tab-avail tab-active"><span class="tab-icon">🔗</span>链路可用性<span class="tab-count">1</span></div>
+        </div>
+        <div class="cot-tab-panel panel-active">
+          <div class="cot-risk-point">
+            <div class="cot-risk-num"><span class="rn-badge rn-avail">1</span>接口容量共享 — 无独立限流策略</div>
+            <div class="cot-chain">
+              <div class="cot-step step-because"><div class="cot-step-label"><span>因为</span><span class="cot-step-sub">变更</span></div><div class="cot-step-body">所有广告场景配置获取经 <span class="code">HandleGetAdConfig</span> 统一路由</div></div>
+              <div class="cot-step step-so"><div class="cot-step-label"><span>所以</span><span class="cot-step-sub">影响</span></div><div class="cot-step-body">新增 <span class="code">SceneRewardFreeAd</span> 分支，请求流量叠加到接口总调用量</div></div>
+              <div class="cot-step step-but"><div class="cot-step-label"><span>但是</span><span class="cot-step-sub">问题</span></div><div class="cot-step-body">新场景<span class="hl-warn">未配置独立限流</span>，与存量场景共享接口容量</div></div>
+              <div class="cot-step step-cause"><div class="cot-step-label"><span>导致</span><span class="cot-step-sub">风险</span></div><div class="cot-step-body"><span class="code">HandleGetAdConfig</span> <span class="hl">P99 延迟可能上升</span>，<span class="hl">接口可用性风险</span></div></div>
+            </div>
+          </div>
         </div>
                 <div class="cot-detail-block" onclick="event.stopPropagation();alert('跳转至 Agent 风险分析页\n\n可查看：\n• 完整 7 步 CoT 推理链\n• 存量功能影响分析\n• 验证建议与回归场景\n• 监控指标与灰度策略\n• 回滚预案')">
           <div class="cot-detail-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 6V11C3 16.5 6.8 20.7 11 22C15.2 20.7 19 16.5 19 11V6L11 2Z" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="1.5"/><path d="M8 11L10 13L14 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -523,18 +592,6 @@
           </div>
           <div class="cot-detail-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
-<div class="cot-footer">
-          <div class="cot-meta">
-            <div class="cot-meta-item"><span class="cot-meta-dot" style="background:var(--warning);"></span><span>风险类别：<strong style="color:var(--warning);">可用性风险</strong></span></div>
-            <div class="cot-meta-item"><span class="cot-meta-dot" style="background:var(--success);"></span><span>触发条件：新场景流量叠加超过接口容量阈值</span></div>
-          </div>
-          <a class="cot-detail-link" href="#"></a>
-        </div>
-      </div>
-      <div class="score-bar">
-        <span class="score-lbl">综合风险</span><div class="score-track"><div class="score-fill sf-low" style="width:35%;"></div></div>
-        <div class="score-wrap"><span class="score-val" style="color:var(--text-2);">35.0</span><div class="score-tip"><div class="rk-row"><span class="rk-row-l">影响类型（间接）</span><span class="rk-row-r">18</span></div><div class="rk-row"><span class="rk-row-l">操作类型（无DB）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">库表等级（—）</span><span class="rk-row-r">0</span></div><div class="rk-row"><span class="rk-row-l">数据量级（—）</span><span class="rk-row-r">17</span></div><div class="rk-total"><span>综合评分</span><span style="color:#86909C;">35.0</span></div></div></div>
-        <div class="score-factors"><div class="sf"><span class="sfv" style="color:var(--warning);">间接</span>影响</div><div class="sf"><span class="sfv" style="color:var(--success);">无</span>DB操作</div><div class="sf"><span class="sfv" style="color:var(--text-3);">—</span>库表</div><div class="sf"><span class="sfv" style="color:var(--text-3);">—</span>量级</div></div>
       </div>
     </div>
   </div>
@@ -579,6 +636,15 @@ function togRow(id){var r=document.getElementById(id),d=document.getElementById(
 function filterRows(type,btn){document.querySelectorAll('.rs-fb').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.rt-row').forEach(function(r){var d=document.getElementById('d'+r.id.substring(1));if(type==='all'){r.style.display='';if(d)d.style.display=''}else{var ts=r.getAttribute('data-type').split(' ');var m=ts.indexOf(type)!==-1;r.style.display=m?'':'none';if(d)d.style.display=m?'':'none';if(!m){r.classList.remove('expanded');if(d)d.classList.remove('show')}}})}
 function showDiff(e){e.stopPropagation();document.getElementById('diffOverlay').classList.add('show')}
 function closeDiff(){document.getElementById('diffOverlay').classList.remove('show')}
+
+function switchTab(cotId, tabIdx) {
+  var area = document.getElementById(cotId);
+  if (!area) return;
+  var tabs = area.querySelectorAll('.cot-tab');
+  var panels = area.querySelectorAll('.cot-tab-panel');
+  tabs.forEach(function(t, i) { t.classList.toggle('tab-active', i === tabIdx); });
+  panels.forEach(function(p, i) { p.classList.toggle('panel-active', i === tabIdx); });
+}
 </script>
 </body>
 </html>
