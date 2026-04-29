@@ -65,9 +65,10 @@
   .rt-name{color:var(--primary);font-weight:500;font-size:13px;padding-top:2px;}
   .rt-name:hover{text-decoration:underline;}
 
-  .rt-type-cell{display:flex;flex-direction:column;gap:4px;padding-top:2px;}
+  .rt-type-cell{display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
   .type-tag{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:500;display:inline-block;white-space:nowrap;width:fit-content;}
-  .tag-core{background:var(--primary-light);color:var(--primary);}
+  .tag-core{background:#E8F3FF;color:var(--primary);border:1px solid #BEDAFF;}
+  .tag-db{background:#FFF8E6;color:#D46B08;border:1px solid #FFE7A3;}
   .type-sub{font-size:10px;color:var(--text-3);display:flex;align-items:center;gap:3px;padding-left:4px;}
   .type-sub::before{content:'└';color:var(--border);font-size:11px;}
   .sub-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
@@ -204,6 +205,7 @@
   .cot-tab.tab-stable .tab-count{background:#FFF3E0;color:#E65100;}
   .cot-tab.tab-func .tab-count{background:#F3E8FF;color:#6B21A8;}
   .cot-tab.tab-avail .tab-count{background:#EFF6FF;color:#1D4ED8;}
+  .cot-tab.tab-chain .tab-count{background:#EFF6FF;color:#1565C0;}
   .cot-tab-panel{display:none;}
   .cot-tab-panel.panel-active{display:block;}
   .cot-chain-group{margin-bottom:0;}
@@ -314,10 +316,10 @@
   <div class="rs-header">
     <div class="rs-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 12H1L7 1Z" stroke="#FF7D00" stroke-width="1.5" fill="none"/><path d="M7 5V8M7 9.5V10" stroke="#FF7D00" stroke-width="1.2" stroke-linecap="round"/></svg> 核心链路风险</div>
     <div class="rs-filters">
-      <div class="rs-fb on" onclick="filterRows('all',this)">全部 (4)</div>
-      <div class="rs-fb" onclick="filterRows('db',this)">含DB影响 (3)</div>
-      <div class="rs-fb" onclick="filterRows('func',this)">含功能影响 (3)</div>
-      <div class="rs-fb" onclick="filterRows('svc',this)">仅服务影响 (1)</div>
+      <div class="rs-fb on" onclick="filterRows('all',this)">全部 (3)</div>
+      <div class="rs-fb" onclick="filterRows('db',this)">含DB风险 (3)</div>
+      <div class="rs-fb" onclick="filterRows('chain',this)">含核心链路风险 (3)</div>
+      <div class="rs-fb" onclick="filterRows('svc',this)" style="display:none;">仅服务影响 (1)</div>
     </div>
   </div>
 
@@ -327,9 +329,9 @@
     </div>
 
     <!-- ROW 1 -->
-    <div class="rt-row" data-type="db func" id="r1" onclick="togRow('r1')">
+    <div class="rt-row" data-type="db chain" id="r1" onclick="togRow('r1')">
       <span class="rt-name">剪映*获取相册页广告</span>
-      <span class="rt-type-cell"><span class="type-tag tag-core">核心链路</span><span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span><span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span></span>
+      <span class="rt-type-cell"><span class="type-tag tag-core">核心链路</span><span class="type-tag tag-db">DB风险</span></span>
       <span class="rt-info-wrap">
         <div class="rt-info-p"><span class="rt-info-title t-stable">[稳定性]</span><span class="rt-info-text"><span class="code">GetFrisbeeResult</span> → <span class="code">reward_free_ad_table</span> 新增 INSERT 写入P0表，无限流兜底，DB写热点风险</span><span class="rt-info-more">→...</span></div>
         <div class="rt-info-p"><span class="rt-info-title t-func">[功能]</span><span class="rt-info-text">新 case 未校验奖励去重逻辑（<span class="code">userId+sceneId</span> 无唯一约束），可能导致重复领取</span><span class="rt-info-more">→...</span></div>
@@ -356,11 +358,11 @@
       <!-- CoT 因果链 — Row 1 -->
       <div class="cot-area" id="cot1">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">风险定性（核心推理）</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-summary"><span class="cs-tag cs-danger">功能点风险 · 资损类</span><span class="cs-sep">|</span><span>触发条件：网络抖动重试 / 并发请求 / DB写入延迟</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--danger);">93.5</span></span></div>
+        <div class="cot-summary"><span class="cs-tag cs-danger">DB风险 · 资损类</span><span class="cs-tag cs-blue">核心链路风险</span><span class="cs-sep">|</span><span>触发条件：网络抖动重试 / 并发请求 / DB写入延迟</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--danger);">93.5</span></span></div>
 
         <div class="cot-tabs">
-          <div class="cot-tab tab-stable tab-active" onclick="switchTab('cot1',0)"><span class="tab-icon">🛡️</span>DB / 稳定性<span class="tab-count">2</span></div>
-          <div class="cot-tab tab-func" onclick="switchTab('cot1',1)"><span class="tab-icon">⚡</span>功能风险<span class="tab-count">1</span></div>
+          <div class="cot-tab tab-stable tab-active" onclick="switchTab('cot1',0)"><span class="tab-icon">🛡️</span>DB风险<span class="tab-count">2</span></div>
+          <div class="cot-tab tab-chain" onclick="switchTab('cot1',1)"><span class="tab-icon">🔗</span>核心链路风险<span class="tab-count">1</span></div>
         </div>
         <div class="cot-tab-panel panel-active">
           <div class="cot-risk-point">
@@ -406,9 +408,9 @@
     </div>
 
     <!-- ROW 2 -->
-    <div class="rt-row" data-type="db func" id="r2" onclick="togRow('r2')">
+    <div class="rt-row" data-type="db chain" id="r2" onclick="togRow('r2')">
       <span class="rt-name">剪映*获取相册页广告recall</span>
-      <span class="rt-type-cell"><span class="type-tag tag-core">核心链路</span><span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span><span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span></span>
+      <span class="rt-type-cell"><span class="type-tag tag-core">核心链路</span><span class="type-tag tag-db">DB风险</span></span>
       <span class="rt-info-wrap">
         <div class="rt-info-p"><span class="rt-info-title t-func">[功能]</span><span class="rt-info-text"><span class="code">LoadRewardConfig</span> → <span class="code">frisbee_reward_config</span> 新场景缺少配置行，命中降级导致免广弹窗不弹出</span><span class="rt-info-more">→...</span></div>
         <div class="rt-info-p"><span class="rt-info-title t-stable">[稳定性]</span><span class="rt-info-text">新场景缓存冷启，<span class="code">LoadRewardConfig</span> 穿透到 DB SELECT，高峰期可能造成读压力回归</span><span class="rt-info-more">→...</span></div>
@@ -433,10 +435,10 @@
       </div>
       <div class="cot-area" id="cot2">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">风险定性（核心推理）</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-summary"><span class="cs-tag cs-purple">功能点风险</span><span class="cs-tag cs-warning">稳定性风险</span><span class="cs-sep">|</span><span>触发条件：上线后即触发（配置缺失）</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--warning);">62.0</span></span></div>
+        <div class="cot-summary"><span class="cs-tag cs-warning">DB风险</span><span class="cs-tag cs-blue">核心链路风险</span><span class="cs-sep">|</span><span>触发条件：上线后即触发（配置缺失）</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--warning);">62.0</span></span></div>
         <div class="cot-tabs">
-          <div class="cot-tab tab-func tab-active" onclick="switchTab('cot2',0)"><span class="tab-icon">⚡</span>功能风险<span class="tab-count">1</span></div>
-          <div class="cot-tab tab-stable" onclick="switchTab('cot2',1)"><span class="tab-icon">🛡️</span>DB / 稳定性<span class="tab-count">1</span></div>
+          <div class="cot-tab tab-chain tab-active" onclick="switchTab('cot2',0)"><span class="tab-icon">🔗</span>核心链路风险<span class="tab-count">1</span></div>
+          <div class="cot-tab tab-stable" onclick="switchTab('cot2',1)"><span class="tab-icon">🛡️</span>DB风险<span class="tab-count">1</span></div>
         </div>
         <div class="cot-tab-panel panel-active">
           <div class="cot-risk-point">
@@ -472,9 +474,9 @@
     </div>
 
     <!-- ROW 3 -->
-    <div class="rt-row" data-type="db func" id="r3" onclick="togRow('r3')">
+    <div class="rt-row" data-type="db chain" id="r3" onclick="togRow('r3')">
       <span class="rt-name">醒图*获取广告配置</span>
-      <span class="rt-type-cell"><span class="type-tag tag-core">核心链路</span><span class="type-sub"><span class="sub-dot sub-dot-db"></span>DB影响</span><span class="type-sub"><span class="sub-dot sub-dot-func"></span>功能影响</span></span>
+      <span class="rt-type-cell"><span class="type-tag tag-core">核心链路</span><span class="type-tag tag-db">DB风险</span></span>
       <span class="rt-info-wrap">
         <div class="rt-info-p"><span class="rt-info-title t-stable">[稳定性]</span><span class="rt-info-text"><span class="code">HandleGetAdConfig</span> → <span class="code">ad_placement_config</span> 共用表增量查询叠加，缓存失效时可能慢查询</span><span class="rt-info-more">→...</span></div>
         <div class="rt-info-p"><span class="rt-info-title t-func">[功能]</span><span class="rt-info-text">广告位配置未覆盖新奖励场景，醒图侧可能出现空广告位或兜底素材异常</span><span class="rt-info-more">→...</span></div>
@@ -497,10 +499,10 @@
       </div>
       <div class="cot-area" id="cot3">
         <div class="cot-head"><div class="cot-icon">🤖</div><span class="cot-ttl">风险定性（核心推理）</span><span class="cot-badge">CoT</span></div>
-        <div class="cot-summary"><span class="cs-tag cs-warning">性能稳定性风险</span><span class="cs-tag cs-purple">功能点风险</span><span class="cs-sep">|</span><span>触发条件：缓存失效窗口 / 配置缺失</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--warning);">71.0</span></span></div>
+        <div class="cot-summary"><span class="cs-tag cs-warning">DB风险</span><span class="cs-tag cs-blue">核心链路风险</span><span class="cs-sep">|</span><span>触发条件：缓存失效窗口 / 配置缺失</span><span class="cs-sep">|</span><span>综合风险 <span class="cs-score" style="color:var(--warning);">71.0</span></span></div>
         <div class="cot-tabs">
-          <div class="cot-tab tab-stable tab-active" onclick="switchTab('cot3',0)"><span class="tab-icon">🛡️</span>DB / 稳定性<span class="tab-count">1</span></div>
-          <div class="cot-tab tab-func" onclick="switchTab('cot3',1)"><span class="tab-icon">⚡</span>功能风险<span class="tab-count">2</span></div>
+          <div class="cot-tab tab-stable tab-active" onclick="switchTab('cot3',0)"><span class="tab-icon">🛡️</span>DB风险<span class="tab-count">1</span></div>
+          <div class="cot-tab tab-chain" onclick="switchTab('cot3',1)"><span class="tab-icon">🔗</span>核心链路风险<span class="tab-count">2</span></div>
         </div>
         <div class="cot-tab-panel panel-active">
           <div class="cot-risk-point">
@@ -545,9 +547,9 @@
     </div>
 
     <!-- ROW 4 -->
-    <div class="rt-row" data-type="svc" id="r4" onclick="togRow('r4')">
+    <div class="rt-row" data-type="svc" id="r4" style="display:none;" onclick="togRow('r4')">
       <span class="rt-name">剪映*获取广告配置</span>
-      <span class="rt-type-cell"><span class="type-tag tag-core">核心链路</span><span class="type-sub"><span class="sub-dot sub-dot-svc"></span>服务功能影响</span></span>
+      <span class="rt-type-cell"><span class="type-tag tag-core">核心链路</span></span>
       <span class="rt-info-wrap">
         <div class="rt-info-p"><span class="rt-info-title t-stable">[稳定性]</span><span class="rt-info-text"><span class="code">SceneRewardFreeAd</span> 新增路由分支扩大 <span class="code">HandleGetAdConfig</span> 调用面，P99 延迟可能上升</span><span class="rt-info-more">→...</span></div>
       </span>
@@ -556,7 +558,7 @@
       <span class="rt-cv"><span class="cv cv-n">未覆盖</span></span>
       <span class="rt-action">展开详情 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     </div>
-    <div class="detail-panel" id="d4">
+    <div class="detail-panel" id="d4" style="display:none;">
       <div class="chain-area">
         <div class="chain-head"><div class="chain-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 7H12.5M9 3.5L12.5 7L9 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>完整影响链路<span class="chain-tag ct-none">✓ 无DB影响</span></div></div>
         <div class="chain-canvas"><div class="chain-flow">
@@ -633,7 +635,7 @@
 
 <script>
 function togRow(id){var r=document.getElementById(id),d=document.getElementById('d'+id.substring(1)),ex=r.classList.contains('expanded');document.querySelectorAll('.rt-row').forEach(function(x){x.classList.remove('expanded')});document.querySelectorAll('.detail-panel').forEach(function(x){x.classList.remove('show')});if(!ex){r.classList.add('expanded');d.classList.add('show')}}
-function filterRows(type,btn){document.querySelectorAll('.rs-fb').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.rt-row').forEach(function(r){var d=document.getElementById('d'+r.id.substring(1));if(type==='all'){r.style.display='';if(d)d.style.display=''}else{var ts=r.getAttribute('data-type').split(' ');var m=ts.indexOf(type)!==-1;r.style.display=m?'':'none';if(d)d.style.display=m?'':'none';if(!m){r.classList.remove('expanded');if(d)d.classList.remove('show')}}})}
+function filterRows(type,btn){document.querySelectorAll('.rs-fb').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.rt-row').forEach(function(r){var d=document.getElementById('d'+r.id.substring(1));if(type==='all'){if(r.id==='r4'){r.style.display='none';if(d)d.style.display='none'}else{r.style.display='';if(d)d.style.display=''}}else{var ts=r.getAttribute('data-type').split(' ');var m=ts.indexOf(type)!==-1;r.style.display=m?'':'none';if(d)d.style.display=m?'':'none';if(!m){r.classList.remove('expanded');if(d)d.classList.remove('show')}}})}
 function showDiff(e){e.stopPropagation();document.getElementById('diffOverlay').classList.add('show')}
 function closeDiff(){document.getElementById('diffOverlay').classList.remove('show')}
 
